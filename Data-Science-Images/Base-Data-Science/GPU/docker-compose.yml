@@ -1,0 +1,10 @@
+version: '2'
+services:
+  datasci:
+    container_name: base-data-science-gpu
+    build:
+      context: ../../../
+      dockerfile: Data-Science-Images/Base-Data-Science/GPU/Dockerfile
+    ports: 
+      - "8888:8888"
+    image: joshcole/base-data-science-gpu:latest

@@ -1,0 +1,17 @@
+version: '2'
+services:
+  datasci:
+    container_name: wooweb-presentation-cpu
+    working_dir: /home/datasci
+    build:
+      context: ../../
+      dockerfile: WooWeb-Presentation/CPU/Dockerfile
+    ports: 
+      - "8888:8888"
+      - "6006:6006"
+    volumes:
+      - ${HOME}/Workspace:/home/datasci/Workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/Downloads:/home/Downloads
+      - /dev/shm:/dev/shm \
+    image: joshcole/wooweb-presentation-cpu:latest

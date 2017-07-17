@@ -1,0 +1,10 @@
+version: '2'
+services:
+  datasci:
+    container_name: base-data-science-cpu
+    build:
+      context: ../../../
+      dockerfile: Data-Science-Images/Base-Data-Science/CPU/Dockerfile
+    ports: 
+      - "8888:8888"
+    image: joshcole/base-data-science-cpu:latest
