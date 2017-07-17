@@ -77,21 +77,22 @@ RUN mkdir -p $HOME/.jupyter/kernels
 RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME/.jupyter/kernels
 
 USER $DATASCI_USER
-RUN julia -e 'Pkg.init()' && \
-    julia -e 'Pkg.update()' && \
-    julia -e 'Pkg.add("HDF5")' && \
-    julia -e 'Pkg.add("Gadfly")' && \
-    julia -e 'Pkg.add("RDatasets")' && \
-    julia -e 'Pkg.add("IJulia")' && \
-    # Precompile Julia packages \
-    julia -e 'using HDF5' && \
-    julia -e 'using Gadfly' && \
-    julia -e 'using RDatasets' && \
-    julia -e 'using IJulia' && \
-    # move kernelspec out of home \
-    mv $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
-    chmod -R go+rx $CONDA_DIR/share/jupyter && \
-    rm -rf $HOME/.local
+
+# RUN julia -e 'Pkg.init()' && \
+#     julia -e 'Pkg.update()' && \
+#     julia -e 'Pkg.add("HDF5")' && \
+#     julia -e 'Pkg.add("Gadfly")' && \
+#     julia -e 'Pkg.add("RDatasets")' && \
+#     julia -e 'Pkg.add("IJulia")' && \
+#     # Precompile Julia packages \
+#     julia -e 'using HDF5' && \
+#     julia -e 'using Gadfly' && \
+#     julia -e 'using RDatasets' && \
+#     julia -e 'using IJulia' && \
+#     # move kernelspec out of home \
+#     mv $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
+#     chmod -R go+rx $CONDA_DIR/share/jupyter && \
+#     rm -rf $HOME/.local
 # RUN cp -r $HOME/.local/share/jupyter/kernels/julia-0.6 $HOME/.jupyter/kernels && \
 # touch $HOME/.jupyter/jupyter_nbconvert_config.py && touch $HOME.jupyter/migrated 
 # RUN bash /tmp/install_julia_base_pkgs.sh
