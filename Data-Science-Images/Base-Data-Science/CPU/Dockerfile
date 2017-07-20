@@ -150,9 +150,8 @@ RUN julia -e 'Pkg.init()' && \
     julia -e 'using RDatasets' && \
     julia -e 'using IJulia'
     # move kernelspec out of home \
-RUN mv $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
-    chmod -R go+rx $CONDA_DIR/share/jupyter && \
-    rm -rf $HOME/.local
+RUN cp -r $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
+    chmod -R go+rx $CONDA_DIR/share/jupyter
 RUN bash /tmp/clean_conda_pip.sh
 
 CMD ["/bin/bash"]
