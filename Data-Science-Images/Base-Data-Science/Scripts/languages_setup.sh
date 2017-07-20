@@ -7,5 +7,5 @@ apt-get update && \
 	cd julia && \
 	echo "JULIA_CPU_TARGET=core2" > Make.user && \
 	make -j 4 julia-deps && make -j 4 && make install && \
-	chown -R $DATASCI_USER:$DATASCI_USER $CONDA_SRC/julia
-	ln -s /opt/julia/julia /usr/local/bin/julia
+	chown -R $DATASCI_USER:$DATASCI_USER $JULIA_PKGDIR
+	ln -s $JULIA_PKGDIR/julia /usr/local/bin/julia

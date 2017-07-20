@@ -19,7 +19,7 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - &&  apt-get updat
 apt-get install --yes git subversion mercurial 
 
 # Documentation generation requirements for jupyter
-# apt-get update && apt-get --yes install texlive texlive-latex-extra pandoc 
+apt-get update && apt-get --yes install texlive texlive-latex-extra pandoc 
 
 apt-get --yes install graphviz gnuplot --fix-missing
 
