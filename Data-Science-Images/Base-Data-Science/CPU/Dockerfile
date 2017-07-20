@@ -109,7 +109,7 @@ USER root
 
 USER $DATASCI_USER
     # Show Julia where conda libraries are \
-# RUN	echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" > $HOME/.juliarc.jl
+RUN	echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" > $HOME/.juliarc.jl
 
 # RUN julia -e 'Pkg.init()' && \
 #     julia -e 'Pkg.update()'
@@ -144,7 +144,6 @@ RUN julia -e 'Pkg.init()' && \
     julia -e 'Pkg.add("Gadfly")' && \
     julia -e 'Pkg.add("RDatasets")' && \
     julia -e 'Pkg.add("IJulia")' && \
-    # Precompile Julia packages \
     julia -e 'using HDF5' && \
     julia -e 'using Gadfly' && \
     julia -e 'using RDatasets' && \
