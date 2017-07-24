@@ -5,28 +5,9 @@ MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 # Configure environment
 ENV DEBIAN_FRONTEND=noninteractive
 ENV IMAGES_DIR Data-Science-Images
-ENV CONDA_DIR /opt/conda
-ENV PATH $CONDA_DIR/bin:$PATH
+
 ENV SHELL /bin/bash
-ENV DATASCI_USER datasci
 ENV NAME base-data-science
-ENV DATASCI_UID 1000
-ENV HOME /home/$DATASCI_USER
-ENV CONDA_BIN $CONDA_DIR/bin
-ENV CONDA_SRC /user/local/src/conda
-ENV TINI_VERSION v0.15.0
-ENV TINI_DIR /opt/tini
-ENV JULIA_PKGDIR /opt/julia
-ENV APACHE_SPARK_VERSION 2.2.0
-ENV HADOOP_VERSION 2.7
-ENV SPARK_HOME /opt/spark
-ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip
-ENV MESOS_NATIVE_LIBRARY /usr/local/lib/libmesos.so
-ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
-ENV SAGE_ROOT /usr/lib/sagemath/
-ENV JUPYTER_SHARE /usr/local/share/jupyter
-ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
-ENV TORRE_VERSION 0.2.0
 
 # The Basics
 RUN	apt-get --yes update && apt-get --yes upgrade
@@ -39,15 +20,31 @@ ENV LANG en_GB.UTF-8
 ENV LANGUAGE en_GB:en  
 ENV LC_ALL en_GB.UTF-8
 
+ENV DATASCI_USER datasci
+ENV DATASCI_UID 1000
+ENV HOME /home/$DATASCI_USER
+
+ENV CONDA_DIR /opt/conda
+ENV CONDA_BIN $CONDA_DIR/bin
+ENV PATH $CONDA_BIN:$PATH
+ENV CONDA_SRC /user/local/src/conda
+
+
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh
 
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/linux_setup.sh /tmp/linux_setup.sh
 RUN bash /tmp/linux_setup.sh
 
+ENV SAGE_ROOT /usr/lib/sagemath/
+ENV JUPYTER_SHARE /usr/local/share/jupyter
+ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
+
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
 RUN bash /tmp/install_sagemath.sh
 
+ENV TINI_VERSION v0.15.0
+ENV TINI_DIR /opt/tini
 
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
 RUN bash /tmp/install_tini.sh
@@ -64,12 +61,18 @@ RUN bash /tmp/install_jupyter_widgets.sh
 # ADD $IMAGES_DIR/Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 # RUN bash /tmp/update_conda_pip_pkgs.sh
 
+ENV JULIA_PKGDIR /opt/julia
 # # Additional Langaues
 # USER root
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/languages_setup.sh /tmp/languages_setup.sh
 # RUN bash /tmp/languages_setup.sh
-
+ENV APACHE_SPARK_VERSION 2.2.0
+ENV HADOOP_VERSION 2.7
+ENV SPARK_HOME /opt/spark
+ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip
+ENV MESOS_NATIVE_LIBRARY /usr/local/lib/libmesos.so
+ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_spark.sh /tmp/install_spark.sh
 # RUN bash /tmp/install_spark.sh
 
@@ -79,7 +82,7 @@ RUN bash /tmp/install_jupyter_widgets.sh
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 # RUN bash /tmp/install_julia_base_pkgs.sh
-
+ENV TORRE_VERSION 0.2.0
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
 # RUN bash /tmp/install_jupyter_kernels.sh
