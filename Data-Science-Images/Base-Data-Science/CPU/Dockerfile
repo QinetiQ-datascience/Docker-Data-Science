@@ -15,6 +15,7 @@ ENV HOME /home/$DATASCI_USER
 ENV CONDA_BIN $CONDA_DIR/bin
 ENV CONDA_SRC /user/local/src/conda
 ENV TINI_VERSION v0.15.0
+ENV TINI_DIR /opt/tini
 ENV JULIA_PKGDIR /opt/julia
 ENV APACHE_SPARK_VERSION 2.2.0
 ENV HADOOP_VERSION 2.7
@@ -26,9 +27,6 @@ ENV SAGE_ROOT /usr/lib/sagemath/
 ENV JUPYTER_SHARE /usr/local/share/jupyter
 ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
 ENV TORRE_VERSION 0.2.0
-
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tini.asc
 
 # The Basics
 RUN	apt-get --yes update && apt-get --yes upgrade
@@ -50,9 +48,7 @@ RUN bash /tmp/linux_setup.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
 RUN bash /tmp/install_sagemath.sh
 
-RUN mkdir -p /opt/tini
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /opt/tini/tini
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /opt/tini/tini.asc
+
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
 RUN bash /tmp/install_tini.sh
 
