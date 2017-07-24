@@ -58,8 +58,8 @@ USER $DATASCI_USER
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
-# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-# RUN bash /tmp/install_jupyter_widgets.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
+RUN bash /tmp/install_jupyter_widgets.sh
 
 # ADD $IMAGES_DIR/Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 # RUN bash /tmp/update_conda_pip_pkgs.sh
