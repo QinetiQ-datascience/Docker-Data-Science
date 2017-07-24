@@ -27,19 +27,28 @@ ENV JUPYTER_SHARE /usr/local/share/jupyter
 ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
 ENV TORRE_VERSION 0.2.0
 
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/linux_setup.sh /tmp/linux_setup.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/languages_setup.sh /tmp/languages_setup.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_conda_r.sh /tmp/install_conda_r.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_spark.sh /tmp/install_spark.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
 ADD $IMAGES_DIR/Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tini.asc
 
-RUN chmod +x /tmp/linux_setup.sh /tmp/languages_setup.sh /tmp/install_anaconda.sh /tmp/install_conda_r.sh /tmp/install_spark.sh /tmp/install_julia_base_pkgs.sh
+
+RUN chmod +x /tmp/linux_setup.sh /tmp/languages_setup.sh /tmp/install_anaconda.sh \
+	/tmp/install_jupyter_widgets.sh  /tmp/install_conda_r.sh /tmp/install_spark.sh \
+	/tmp/install_julia_base_pkgs.sh /tmp/update_conda_pip_pkgs.sh /tmp/clean_conda_pip.sh \
+	/tmp/install_sagemath.sh /tmp/install_tini.sh /tmp/install_jupyter_kernels.sh
 
 # Expose Port For Jupyter
 EXPOSE 8888 
@@ -55,40 +64,15 @@ ENV LANG en_GB.UTF-8
 ENV LANGUAGE en_GB:en  
 ENV LC_ALL en_GB.UTF-8
 
-RUN useradd -m --shell /bin/bash --uid $DATASCI_UID --user-group $DATASCI_USER 
-
-VOLUME ["$HOME/Workspace", "$HOME/Downloads"]
-
-RUN mkdir -p $CONDA_DIR && chown $DATASCI_USER $CONDA_DIR
-
-# Change ownership
-RUN chown -R $DATASCI_USER:$DATASCI_USER $CONDA_DIR
-
-# Users passwords
-RUN echo "$DATASCI_USER:$DATASCI_USER"|chpasswd && adduser $DATASCI_USER sudo
-RUN echo "root:Docker!" | chpasswd
-
+RUN bash /tmp/setup_datasci_user.sh
 RUN bash /tmp/linux_setup.sh
-RUN mkdir -p $CONDA_SRC && chown -R $DATASCI_USER:$DATASCI_USER $CONDA_SRC
-
-RUN apt-add-repository -y ppa:aims/sagemath && apt-get update && apt-get --yes install sagemath-upstream-binary
-RUN chown -R $DATASCI_USER:$DATASCI_USER $SAGE_ROOT
-RUN mkdir -p $HOME/.sage
-RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME/.sage && chmod -R 775 $HOME/.sage
-
-RUN mkdir -p /usr/local/share/jupyter && chown -R $DATASCI_USER:$DATASCI_USER $JUPYTER_SHARE
-RUN chown -R $DATASCI_USER:$DATASCI_USER $JUPYTER_SHARE
-RUN mkdir -p $USER_JUPYTER_KERNELS && chown -R $DATASCI_USER:$DATASCI_USER $USER_JUPYTER_KERNELS
-
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 \
- && gpg --verify /tini.asc
-RUN    mv tini /usr/local/bin/tini && \
-    chmod +x /usr/local/bin/tini
+RUN bash /tmp/install_sagemath.sh
+RUN bash /tmp/install_tini.sh
 
 # Anaconda Setup
 USER $DATASCI_USER
 RUN bash /tmp/install_anaconda.sh
-COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
+RUN bash /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/update_conda_pip_pkgs.sh
 
 # Additional Langaues
@@ -98,18 +82,9 @@ RUN bash /tmp/install_spark.sh
 
 USER $DATASCI_USER
 
-RUN $CONDA_BIN/pip install -r /tmp/requirements_kernel.txt && $CONDA_BIN/python -m octave_kernel.install
-RUN mv $HOME/.local/share/jupyter/kernels/octave* $CONDA_DIR/share/jupyter/kernels/
-RUN $CONDA_BIN/jupyter kernelspec install $SAGE_ROOT/local/share/jupyter/kernels/sagemath
-RUN /usr/lib/sagemath/local/bin/python2.7 -m pip install ipykernel
-RUN /usr/lib/sagemath/local/bin/python2.7 -m ipykernel install --user
-
-RUN pip install https://dist.apache.org/repos/dist/dev/incubator/toree/${TORRE_VERSION}/snapshots/dev1/toree-pip/toree-${TORRE_VERSION}.dev1.tar.gz
-RUN jupyter toree install --user --spark_home=$SPARK_HOME --interpreters=PySpark,SQL,Scala,R
-RUN $CONDA_BIN/conda install -c conda-forge spylon-kernel && $CONDA_BIN/python -m spylon_kernel install
-RUN $CONDA_BIN/pip install bash_kernel && $CONDA_BIN/python -m bash_kernel.install
 RUN bash /tmp/install_conda_r.sh
 RUN bash /tmp/install_julia_base_pkgs.sh
+RUN bash /tmp/install_jupyter_kernels.sh
 # RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
 #     stack install --fast && \
 #     stack exec ihaskell -- install --stack
@@ -128,9 +103,8 @@ RUN rm -rf $CONDA_SRC/*
 USER $DATASCI_USER
 RUN rm -rf $HOME/.local
 RUN bash /tmp/clean_conda_pip.sh
-# ENTRYPOINT ["/tini", "--"]
+COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
+ENTRYPOINT ["/tini", "--"]
 CMD ["/bin/bash"]
 
 # Haskel bash
-# 
-# /usr/lib/sagemath/local/lib/python2.7
