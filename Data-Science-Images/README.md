@@ -1,6 +1,6 @@
 # DataScience-Stack
 
-In progress, go to Data-Science-Images/Base-Data-Science
+In progress, go to Base-Data-Science
 
 Install Docker:
 Windows/Mac: https://www.docker.com/community-edition
