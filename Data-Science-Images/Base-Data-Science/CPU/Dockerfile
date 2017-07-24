@@ -27,31 +27,8 @@ ENV JUPYTER_SHARE /usr/local/share/jupyter
 ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
 ENV TORRE_VERSION 0.2.0
 
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/linux_setup.sh /tmp/linux_setup.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/languages_setup.sh /tmp/languages_setup.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_conda_r.sh /tmp/install_conda_r.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_spark.sh /tmp/install_spark.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
-ADD $IMAGES_DIR/Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
-ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tini.asc
-
-
-RUN chmod +x /tmp/linux_setup.sh /tmp/languages_setup.sh /tmp/install_anaconda.sh \
-	/tmp/install_jupyter_widgets.sh  /tmp/install_conda_r.sh /tmp/install_spark.sh \
-	/tmp/install_julia_base_pkgs.sh /tmp/update_conda_pip_pkgs.sh /tmp/clean_conda_pip.sh \
-	/tmp/install_sagemath.sh /tmp/install_tini.sh /tmp/install_jupyter_kernels.sh
-
-# Expose Port For Jupyter
-EXPOSE 8888 
 
 # The Basics
 RUN	apt-get --yes update && apt-get --yes upgrade
@@ -64,30 +41,52 @@ ENV LANG en_GB.UTF-8
 ENV LANGUAGE en_GB:en  
 ENV LC_ALL en_GB.UTF-8
 
-RUN bash /tmp/setup_datasci_user.sh
-RUN bash /tmp/linux_setup.sh
-RUN bash /tmp/install_sagemath.sh
-RUN bash /tmp/install_tini.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
+RUN chmod +x /tmp/setup_datasci_user.sh && bash /tmp/setup_datasci_user.sh
 
-# Anaconda Setup
-USER $DATASCI_USER
-RUN bash /tmp/install_anaconda.sh
-RUN bash /tmp/install_jupyter_widgets.sh
-RUN bash /tmp/update_conda_pip_pkgs.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/linux_setup.sh /tmp/linux_setup.sh
+RUN chmod +x /tmp/linux_setup.sh && bash /tmp/linux_setup.sh
 
-# Additional Langaues
-USER root
-RUN bash /tmp/languages_setup.sh
-RUN bash /tmp/install_spark.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
+RUN chmod +x /tmp/install_sagemath.sh && bash /tmp/install_sagemath.sh
 
-USER $DATASCI_USER
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
+RUN chmod +x /tmp/install_tini.sh && bash /tmp/install_tini.sh
 
-RUN bash /tmp/install_conda_r.sh
-RUN bash /tmp/install_julia_base_pkgs.sh
-RUN bash /tmp/install_jupyter_kernels.sh
-# RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
-#     stack install --fast && \
-#     stack exec ihaskell -- install --stack
+# # Anaconda Setup
+# USER $DATASCI_USER
+
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
+# RUN chmod +x /tmp/install_anaconda.sh &&  bash /tmp/install_anaconda.sh
+
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
+# RUN chmod +x /tmp/install_jupyter_widgets.sh && bash /tmp/install_jupyter_widgets.sh
+
+# ADD $IMAGES_DIR/Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
+# RUN chmod +x /tmp/update_conda_pip_pkgs.sh && bash /tmp/update_conda_pip_pkgs.sh
+
+# # Additional Langaues
+# USER root
+
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/languages_setup.sh /tmp/languages_setup.sh
+# RUN chmod +x /tmp/languages_setup.sh && bash /tmp/languages_setup.sh
+
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_spark.sh /tmp/install_spark.sh
+# RUN chmod +x /tmp/install_spark.sh && bash /tmp/install_spark.sh
+
+# USER $DATASCI_USER
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_conda_r.sh /tmp/install_conda_r.sh
+# RUN chmod +x /tmp/install_conda_r.sh && bash /tmp/install_conda_r.sh
+
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
+# RUN chmod +x /tmp/install_julia_base_pkgs.sh && bash /tmp/install_julia_base_pkgs.sh
+
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
+# ADD $IMAGES_DIR/Base-Data-Science/Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
+# RUN chmod +x /tmp/install_jupyter_kernels.sh && bash /tmp/install_jupyter_kernels.sh
+# # RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
+# #     stack install --fast && \
+# #     stack exec ihaskell -- install --stack
 
 USER root 
 # ~~~~ CLEAN UP ~~~~
@@ -100,9 +99,13 @@ RUN apt-get autoremove && apt-get clean \
 
 RUN rm -rf $CONDA_SRC/*
 
+# Expose Port For Jupyter
+EXPOSE 8888-9000
+
 USER $DATASCI_USER
 RUN rm -rf $HOME/.local
-RUN bash /tmp/clean_conda_pip.sh
+ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
+RUN chmod +x /tmp/clean_conda_pip.sh && bash /tmp/clean_conda_pip.sh
 COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
 ENTRYPOINT ["/tini", "--"]
 CMD ["/bin/bash"]
