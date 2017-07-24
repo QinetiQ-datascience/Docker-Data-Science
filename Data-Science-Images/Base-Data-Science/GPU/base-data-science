@@ -6,11 +6,9 @@ HOME_DIR="/home/$USER_NAME"
 
 # Users home is mounted as home
 # --rm will remove the container as soon as it ends
-echo "Linking: ${HOME}/Workspace to container Workspace ${HOME_DIR}/Workspace"
 docker run --rm \
-    --net host \
     -i -t \
-    -e HHHOME=${HOME} \
+    -v $HOME/Downloads:${HOME_DIR}/Downloads \
     -w $HOME_DIR \
     -p 8888:8888 \
-    base-data-science-gpu
+    joshcole/base-data-science-gpu
