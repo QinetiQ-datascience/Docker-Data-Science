@@ -26,8 +26,3 @@ apt-get --yes install graphviz gnuplot --fix-missing
 
 # Install Boost
 sudo apt-get --yes update && add-apt-repository universe && apt-get --yes update && apt-get --yes install  libboost-all-dev
-
-
-
-
-
