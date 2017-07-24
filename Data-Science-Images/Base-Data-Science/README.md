@@ -50,3 +50,8 @@ Documentation:
 
  - Pandoc
  - TexLive
+
+Dev environment:
+
+ - Jupyter Notebook
+ - JupyterLab
