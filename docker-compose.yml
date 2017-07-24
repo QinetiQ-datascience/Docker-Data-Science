@@ -1,13 +1,13 @@
 version: '2'
 services:
-  datasci-cpu:
+  base-data-science-cpu:
     container_name: base-data-science-cpu
     build:
       context: .
       dockerfile: Data-Science-Images/Base-Data-Science/CPU/Dockerfile
     image: joshcole/base-data-science-cpu:latest
 
-  datasci-gpu:
+  base-data-science-gpu:
     container_name: base-data-science-gpu
     build:
       context: .
