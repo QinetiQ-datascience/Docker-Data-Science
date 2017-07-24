@@ -50,14 +50,17 @@ RUN bash /tmp/linux_setup.sh
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
 RUN bash /tmp/install_sagemath.sh
 
+RUN mkdir -p /opt/tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /opt/tini/tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /opt/tini/tini.asc
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
 RUN bash /tmp/install_tini.sh
 
-# # Anaconda Setup
-# USER $DATASCI_USER
+# Anaconda Setup
+USER $DATASCI_USER
 
-# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
-# RUN bash /tmp/install_anaconda.sh
+ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
+RUN bash /tmp/install_anaconda.sh
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 # RUN bash /tmp/install_jupyter_widgets.sh
@@ -107,7 +110,7 @@ EXPOSE 8888-9000
 USER $DATASCI_USER
 RUN rm -rf $HOME/.local
 ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
-RUN bash /tmp/clean_conda_pip.sh
+# RUN bash /tmp/clean_conda_pip.sh
 COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
-ENTRYPOINT ["/tini", "--"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
