@@ -8,3 +8,7 @@
     export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
     
     Rscript /tmp/package_installs.R
+    $CONDA_BIN/conda install --yes -c r r-tidyverse
+    $CONDA_BIN/cconda install --yes -c r r-shiny
+    $CONDA_BIN/conda install --yes -c r r-sparklyr
+    conda install -c r r-rbokeh

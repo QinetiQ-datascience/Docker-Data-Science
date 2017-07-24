@@ -42,54 +42,56 @@ ENV LANGUAGE en_GB:en
 ENV LC_ALL en_GB.UTF-8
 
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
-RUN chmod +x /tmp/setup_datasci_user.sh && bash /tmp/setup_datasci_user.sh
+RUN bash /tmp/setup_datasci_user.sh
 
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/linux_setup.sh /tmp/linux_setup.sh
-RUN chmod +x /tmp/linux_setup.sh && bash /tmp/linux_setup.sh
+RUN bash /tmp/linux_setup.sh
 
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_sagemath.sh /tmp/install_sagemath.sh
-RUN chmod +x /tmp/install_sagemath.sh && bash /tmp/install_sagemath.sh
+RUN bash /tmp/install_sagemath.sh
 
 ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_tini.sh /tmp/install_tini.sh
-RUN chmod +x /tmp/install_tini.sh && bash /tmp/install_tini.sh
+RUN bash /tmp/install_tini.sh
 
 # # Anaconda Setup
 # USER $DATASCI_USER
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_anaconda.sh /tmp/install_anaconda.sh
-# RUN chmod +x /tmp/install_anaconda.sh &&  bash /tmp/install_anaconda.sh
+# RUN bash /tmp/install_anaconda.sh
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-# RUN chmod +x /tmp/install_jupyter_widgets.sh && bash /tmp/install_jupyter_widgets.sh
+# RUN bash /tmp/install_jupyter_widgets.sh
 
 # ADD $IMAGES_DIR/Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-# RUN chmod +x /tmp/update_conda_pip_pkgs.sh && bash /tmp/update_conda_pip_pkgs.sh
+# RUN bash /tmp/update_conda_pip_pkgs.sh
 
 # # Additional Langaues
 # USER root
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/languages_setup.sh /tmp/languages_setup.sh
-# RUN chmod +x /tmp/languages_setup.sh && bash /tmp/languages_setup.sh
+# RUN bash /tmp/languages_setup.sh
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_spark.sh /tmp/install_spark.sh
-# RUN chmod +x /tmp/install_spark.sh && bash /tmp/install_spark.sh
+# RUN bash /tmp/install_spark.sh
 
 # USER $DATASCI_USER
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_conda_r.sh /tmp/install_conda_r.sh
-# RUN chmod +x /tmp/install_conda_r.sh && bash /tmp/install_conda_r.sh
+# RUN bash /tmp/install_conda_r.sh
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
-# RUN chmod +x /tmp/install_julia_base_pkgs.sh && bash /tmp/install_julia_base_pkgs.sh
+# RUN bash /tmp/install_julia_base_pkgs.sh
 
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
 # ADD $IMAGES_DIR/Base-Data-Science/Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
-# RUN chmod +x /tmp/install_jupyter_kernels.sh && bash /tmp/install_jupyter_kernels.sh
+# RUN bash /tmp/install_jupyter_kernels.sh
 # # RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
 # #     stack install --fast && \
 # #     stack exec ihaskell -- install --stack
 
 USER root 
 # ~~~~ CLEAN UP ~~~~
+# RUN add-apt-repository ppa:chronitis/jupyter
+# RUN apt-get update && apt-get install ihaskell ijulia ijavascript
 
 RUN apt-get --yes update && apt-get --yes upgrade && apt-get --yes autoremove
 RUN apt-get autoremove && apt-get clean \
@@ -105,9 +107,7 @@ EXPOSE 8888-9000
 USER $DATASCI_USER
 RUN rm -rf $HOME/.local
 ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
-RUN chmod +x /tmp/clean_conda_pip.sh && bash /tmp/clean_conda_pip.sh
+RUN bash /tmp/clean_conda_pip.sh
 COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
 ENTRYPOINT ["/tini", "--"]
 CMD ["/bin/bash"]
-
-# Haskel bash

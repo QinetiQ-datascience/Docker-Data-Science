@@ -14,7 +14,7 @@ echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | de
 	rm -rf /var/cache/oracle-jdk8-installer
 
 # Install Nodejs
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - &&  apt-get update && apt-get --yes install nodejs
+curl -sL https://deb.nodesource.com/setup_8.x | bash - &&  apt-get update && apt-get --yes install nodejs
 
 # Version control
 apt-get install --yes git subversion mercurial --no-install-recommends
