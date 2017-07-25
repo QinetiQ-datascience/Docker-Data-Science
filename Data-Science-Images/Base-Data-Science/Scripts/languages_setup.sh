@@ -1,4 +1,4 @@
-apt update && apt --yes install libzmq-dev libffi-dev
+apt update && apt --yes install libzmq-dev libgmp-dev libffi-dev
 
 cd $CONDA_SRC && git clone https://github.com/zeromq/libzmq \
 && cd $CONDA_SRC/libzmq && mkdir cmake-build
