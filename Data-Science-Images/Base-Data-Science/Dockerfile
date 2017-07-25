@@ -76,11 +76,11 @@ ENV IHaskell /opt/IHaskell
 
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
-RUN npm install -g ijavascript
+
  # ihaskell ijavascript
 
-# USER $DATASCI_USER
-
+USER $DATASCI_USER
+RUN npm install -g ijavascript
 # ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 # RUN bash /tmp/install_julia_base_pkgs.sh
 
