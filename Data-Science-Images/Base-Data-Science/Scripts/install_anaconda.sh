@@ -20,4 +20,4 @@ $CONDA_DIR/bin/conda update --quiet --yes \
 
 $CONDA_BIN/conda update --yes setuptools
 $CONDA_BIN/pip install --upgrade pip
-conda install --yes -c conda-forge jupyterlab
+$CONDA_BIN/conda install --yes icu=58 --channel conda-forge

@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 
@@ -9,8 +9,8 @@ ENV SHELL /bin/bash
 ENV NAME base-data-science
 
 # The Basics
-RUN	apt-get --yes update && apt-get --yes upgrade
-RUN apt-get --yes install  aptitude apt-utils sudo locales  
+RUN	apt --yes update && apt --yes upgrade
+RUN apt --yes install  aptitude apt-utils sudo locales  
 
 # Locale
 RUN sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -26,7 +26,7 @@ ENV HOME /home/$DATASCI_USER
 ENV CONDA_DIR /opt/conda
 ENV CONDA_BIN $CONDA_DIR/bin
 ENV PATH $CONDA_BIN:$PATH
-ENV CONDA_SRC /user/local/src/conda
+ENV CONDA_SRC /usr/local/src/conda
 
 ADD Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh
@@ -63,54 +63,45 @@ ADD Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/install_jupyter_widgets.sh
 
 # Additional Langaues
+USER root 
+
+USER $DATASCI_USER
+ADD Scripts/install_conda_r.sh /tmp/install_conda_r.sh
+RUN bash /tmp/install_conda_r.sh
+
 USER root
 
 ENV JULIA_PKGDIR /opt/julia
+ENV IHaskell /opt/IHaskell
+
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
+RUN npm install -g ijavascript
+ # ihaskell ijavascript
 
-# # RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
-# #     stack install --fast && \
-# #     stack exec ihaskell -- install --stack
-
-
-##
-## { SPARK Congiuration }
-##
-ENV APACHE_SPARK_VERSION 2.2.0
-ENV HADOOP_VERSION 2.7
-ENV SPARK_HADOOP_CHECKSUM 7a186a2a007b2dfd880571f7214a7d329c972510a460a8bdbef9f7f2a891019343c020f74b496a61e5aa42bc9e9a79cc99defe5cb3bf8b6f49c07e01b259bc6b
-ENV SPARK_HOME /opt/spark
-ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip
-ENV MESOS_NATIVE_LIBRARY /usr/local/lib/libmesos.so
-ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
-ADD Scripts/install_spark.sh /tmp/install_spark.sh
-RUN bash /tmp/install_spark.sh
-
- # ihaskell ijulia ijavascript
-
-USER $DATASCI_USER
-# ADD Scripts/install_conda_r.sh /tmp/install_conda_r.sh
-# RUN bash /tmp/install_conda_r.sh
+# USER $DATASCI_USER
 
 # ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 # RUN bash /tmp/install_julia_base_pkgs.sh
-ENV TORRE_VERSION 0.2.0
-ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
-ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
 
-# Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
-RUN bash /tmp/install_jupyter_kernels.sh
+# USER root
+
+# # ~~~~ CLEAN UP ~~~~
+
+# RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean \
+# 	&& apt purge --auto-remove  -y curl \
+# 	&& rm -rf /var/lib/apt/lists/* \
+#     && rm -rf /src/*.deb \
+#     && rm -rf $CONDA_SRC/*
+
+# USER $DATASCI_USER
+# # Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
+# # ENV TORRE_VERSION 0.2.0
+# ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
+# ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
+# RUN bash /tmp/install_jupyter_kernels.sh
 
 USER root 
-# ~~~~ CLEAN UP ~~~~
-
-
-RUN apt-get --yes update && apt-get --yes upgrade && apt-get --yes autoremove&& apt-get clean \
-	&& apt-get purge --auto-remove  -y curl \
-	&& rm -rf /var/lib/apt/lists/* \
-    && rm -rf /src/*.deb \
-    && rm -rf $CONDA_SRC/*
 
 # Expose Port For Jupyter
 EXPOSE 8888-9000
@@ -120,11 +111,8 @@ RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 
 USER $DATASCI_USER
 
-RUN rm -rf $HOME/.local
 ADD Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
 RUN bash /tmp/clean_conda_pip.sh
-
-
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]

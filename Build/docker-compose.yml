@@ -1,0 +1,8 @@
+version: '2'
+services:
+  base-data-science:
+    container_name: base-data-science
+    build:
+      context: ../Data-Science-Images/Base-Data-Science/
+      dockerfile: Dockerfile
+    image: joshcole/base-data-science:latest

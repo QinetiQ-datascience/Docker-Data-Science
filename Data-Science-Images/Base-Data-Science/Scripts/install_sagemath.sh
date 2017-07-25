@@ -1,5 +1,5 @@
 # Install Sage math
-apt-add-repository -y ppa:aims/sagemath && apt-get update && apt-get --yes install sagemath-upstream-binary
+apt-add-repository -y ppa:aims/sagemath && apt update && apt --yes install sagemath-upstream-binary
 chown -R $DATASCI_USER:$DATASCI_USER $SAGE_ROOT
 mkdir -p $HOME/.sage
 chown -R $DATASCI_USER:$DATASCI_USER $HOME/.sage && chmod -R 775 $HOME/.sage

@@ -1,5 +1,4 @@
-$CONDA_DIR/bin/conda config --system --add channels r && \
-   conda install --yes \
+$CONDA_BIN/conda install --yes \
    "r-essentials" \
    "r-xgboost" \
    "r-irkernel" \
