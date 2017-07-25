@@ -10,5 +10,5 @@ docker run --rm \
     -i -t \
     -v $HOME/Downloads:${HOME_DIR}/Downloads \
     -w $HOME_DIR \
-    -p 8888:8888 \
+    -p 8888-9000:8888-9000 \
     joshcole/base-data-science-gpu

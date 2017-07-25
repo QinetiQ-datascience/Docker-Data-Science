@@ -41,6 +41,7 @@ ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
 ADD Scripts/install_sagemath.sh /tmp/install_sagemath.sh
 RUN bash /tmp/install_sagemath.sh
 
+# SHA Currently failing
 ENV TINI_VERSION v0.15.0
 ENV TINI_CHECKSUM 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7
 ENV TINI_DIR /opt/tini
@@ -54,18 +55,28 @@ USER $DATASCI_USER
 ADD Scripts/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
+# Might be bad to blindly update all packages
+ADD Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
+RUN bash /tmp/update_conda_pip_pkgs.sh
+
 ADD Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/install_jupyter_widgets.sh
 
-# ADD Scripts/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-# RUN bash /tmp/update_conda_pip_pkgs.sh
+# Additional Langaues
+USER root
 
 ENV JULIA_PKGDIR /opt/julia
-# # Additional Langaues
-# USER root
+ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
+RUN bash /tmp/languages_setup.sh
 
-# ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
-# RUN bash /tmp/languages_setup.sh
+# # RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
+# #     stack install --fast && \
+# #     stack exec ihaskell -- install --stack
+
+
+##
+## { SPARK Congiuration }
+##
 ENV APACHE_SPARK_VERSION 2.2.0
 ENV HADOOP_VERSION 2.7
 ENV SPARK_HADOOP_CHECKSUM 7a186a2a007b2dfd880571f7214a7d329c972510a460a8bdbef9f7f2a891019343c020f74b496a61e5aa42bc9e9a79cc99defe5cb3bf8b6f49c07e01b259bc6b
@@ -73,25 +84,23 @@ ENV SPARK_HOME /opt/spark
 ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip
 ENV MESOS_NATIVE_LIBRARY /usr/local/lib/libmesos.so
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
-# ADD Scripts/install_spark.sh /tmp/install_spark.sh
-# RUN bash /tmp/install_spark.sh
+ADD Scripts/install_spark.sh /tmp/install_spark.sh
+RUN bash /tmp/install_spark.sh
 
-# RUN add-apt-repository ppa:chronitis/jupyter
-# RUN apt-get --yes update && apt-get install ihaskell ijulia ijavascript
+ # ihaskell ijulia ijavascript
 
-# USER $DATASCI_USER
-# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_conda_r.sh /tmp/install_conda_r.sh
+USER $DATASCI_USER
+# ADD Scripts/install_conda_r.sh /tmp/install_conda_r.sh
 # RUN bash /tmp/install_conda_r.sh
 
-# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
+# ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 # RUN bash /tmp/install_julia_base_pkgs.sh
 ENV TORRE_VERSION 0.2.0
-# ADD $IMAGES_DIR/Base-Data-Science/Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
-# ADD $IMAGES_DIR/Base-Data-Science/Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
-# RUN bash /tmp/install_jupyter_kernels.sh
-# # RUN cd $CONDA_SRC/IHaskell && stack install gtk2hs-buildtools && \
-# #     stack install --fast && \
-# #     stack exec ihaskell -- install --stack
+ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
+ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
+
+# Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
+RUN bash /tmp/install_jupyter_kernels.sh
 
 USER root 
 # ~~~~ CLEAN UP ~~~~
@@ -106,13 +115,16 @@ RUN apt-get --yes update && apt-get --yes upgrade && apt-get --yes autoremove&& 
 # Expose Port For Jupyter
 EXPOSE 8888-9000
 
+COPY Scripts/jupyter_notebook_config.py /etc/jupyter/
+RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
+
 USER $DATASCI_USER
 
 RUN rm -rf $HOME/.local
-ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
+ADD Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
 RUN bash /tmp/clean_conda_pip.sh
 
-COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
+
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]

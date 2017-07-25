@@ -1,4 +1,10 @@
 # Configuration file for jupyter-notebook.
+from jupyter_core.paths import jupyter_data_dir
+import subprocess
+import os
+import errno
+import stat
+
 c = get_config()
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
@@ -159,7 +165,7 @@ c = get_config()
 #c.NotebookApp.iopub_msg_rate_limit = 1000
 
 ## The IP address the notebook server will listen on.
-#c.NotebookApp.ip = 'localhost'
+c.NotebookApp.ip = '*'
 
 ## Supply extra arguments that will be passed to Jinja environment.
 #c.NotebookApp.jinja_environment_options = {}
@@ -603,3 +609,25 @@ c.NotebookApp.port = 8888
 #  
 #  By default, all installed kernels are allowed.
 #c.KernelSpecManager.whitelist = set()
+# Generate a self-signed certificate
+if 'GEN_CERT' in os.environ:
+    dir_name = jupyter_data_dir()
+    pem_file = os.path.join(dir_name, 'notebook.pem')
+    try:
+        os.makedirs(dir_name)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(dir_name):
+            pass
+        else:
+            raise
+    # Generate a certificate if one doesn't exist on disk
+    subprocess.check_call(['openssl', 'req', '-new',
+                           '-newkey', 'rsa:2048',
+                           '-days', '365',
+                           '-nodes', '-x509',
+                           '-subj', '/C=XX/ST=XX/L=XX/O=generated/CN=generated',
+                           '-keyout', pem_file,
+                           '-out', pem_file])
+    # Restrict access to the file
+    os.chmod(pem_file, stat.S_IRUSR | stat.S_IWUSR)
+    c.NotebookApp.certfile = pem_file

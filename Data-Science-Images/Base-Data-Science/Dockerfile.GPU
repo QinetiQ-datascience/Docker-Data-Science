@@ -107,10 +107,10 @@ EXPOSE 8888-9000
 USER $DATASCI_USER
 
 RUN rm -rf $HOME/.local
-ADD $IMAGES_DIR/Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
+ADD Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
 RUN bash /tmp/clean_conda_pip.sh
 
-COPY $IMAGES_DIR/Base-Data-Science/Scripts/jupyter_notebook_config.py $HOME/.jupyter/
+COPY Scripts/jupyter_notebook_config.py $HOME/.jupyter/
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
