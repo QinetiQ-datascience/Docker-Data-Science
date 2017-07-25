@@ -1,12 +1,14 @@
-apt update && apt --yes install octave scala
-apt update && apt --yes install libzmq-dev
+apt update && apt --yes install libzmq-dev libffi-dev
 
 cd $CONDA_SRC && git clone https://github.com/zeromq/libzmq \
-&& cd $CONDA_SRC/libzmq \
-mkdir cmake-build && cd cmake-build \
+&& cd $CONDA_SRC/libzmq && mkdir cmake-build
+
+cd $CONDA_SRC/libzmq/cmake-build \
 && cmake .. && make -j 4 \
 && make test && make install && sudo ldconfig \
 rm -rf $CONDA_SRC/libzmq
+
+apt update && apt --yes install octave scala
 
 # Show Julia where conda libraries are andß Create JULIA_PKGDIR 
 echo "deb http://ppa.launchpad.net/staticfloat/juliareleases/ubuntu trusty main" > /etc/apt/sources.list.d/julia.list && \
@@ -21,8 +23,6 @@ echo "deb http://ppa.launchpad.net/staticfloat/juliareleases/ubuntu trusty main"
     mkdir $JULIA_PKGDIR && \
     chown -R $DATASCI_USER:$DATASCI_USER $JULIA_PKGDIR
 ln -s $JULIA_PKGDIR/julia /usr/local/bin/julia
-
-apt --yes update && apt --yes install libffi-dev
 
 cd /opt && curl -sSL https://get.haskellstack.org/ | sh \
 	&& git clone https://github.com/gibiansky/IHaskell \
