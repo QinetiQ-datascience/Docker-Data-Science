@@ -5,7 +5,7 @@ cd $CONDA_SRC && git clone https://github.com/zeromq/libzmq \
 
 cd $CONDA_SRC/libzmq/cmake-build \
 && cmake .. && make -j 4 \
-&& make test && make install && sudo ldconfig \
+&& make test && make install && ldconfig \
 rm -rf $CONDA_SRC/libzmq
 
 apt update && apt --yes install octave scala
