@@ -63,8 +63,6 @@ ADD Scripts/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/install_jupyter_widgets.sh
 
 # Additional Langaues
-USER root 
-
 USER $DATASCI_USER
 ADD Scripts/install_conda_r.sh /tmp/install_conda_r.sh
 RUN bash /tmp/install_conda_r.sh
