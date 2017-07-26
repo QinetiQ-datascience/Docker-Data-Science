@@ -1,3 +1,5 @@
+set -e
+
 # Install Sage math
 apt-add-repository -y ppa:aims/sagemath && apt update && apt --yes install sagemath-upstream-binary
 chown -R $DATASCI_USER:$DATASCI_USER $SAGE_ROOT

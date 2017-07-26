@@ -75,11 +75,6 @@ ENV IHaskell /opt/IHaskell
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
 
- # ihaskell ijavascript
-RUN mkdir -p /usr/lib/node_modules/ijavascript/node_modules/zeromq/zmq
-RUN chown -R $DATASCI_USER:$DATASCI_USER /usr/lib/node_modules/
-
-
 USER $DATASCI_USER
 ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 RUN bash /tmp/install_julia_base_pkgs.sh

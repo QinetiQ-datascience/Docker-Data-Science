@@ -1,3 +1,5 @@
+set -e
+
 useradd -m --shell /bin/bash --uid $DATASCI_UID --user-group $DATASCI_USER 
 
 mkdir -p $CONDA_DIR && chown $DATASCI_USER $CONDA_DIR

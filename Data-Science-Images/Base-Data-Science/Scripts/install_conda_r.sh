@@ -1,3 +1,5 @@
+set -e
+
 $CONDA_BIN/conda install --yes \
    "r-essentials" \
    "r-xgboost" \

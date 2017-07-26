@@ -1,3 +1,5 @@
+set -e
+
 # Anaconda install Options
 # -b           install in batch mode (without manual intervention),
 #              it is expected the license terms are agreed upon

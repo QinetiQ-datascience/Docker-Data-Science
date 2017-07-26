@@ -1,4 +1,7 @@
+set -e
+
 npm install -g ijavascript
+
 $CONDA_BIN/pip install -r /tmp/requirements_kernel.txt
 
 $CONDA_BIN/python -m octave_kernel.install

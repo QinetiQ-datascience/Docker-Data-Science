@@ -1,3 +1,5 @@
+set -e
+
 # IJulia
 # Add Julia packages
 julia -e 'Pkg.init()' && \

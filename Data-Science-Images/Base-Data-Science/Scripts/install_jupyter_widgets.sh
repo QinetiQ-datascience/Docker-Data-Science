@@ -1,3 +1,5 @@
+set -e
+
 # $CONDA_BIN/conda install --yes mathjax
 $CONDA_BIN/conda install --yes --channel damianavila82 rise
 

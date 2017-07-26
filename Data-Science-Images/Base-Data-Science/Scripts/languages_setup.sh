@@ -1,4 +1,4 @@
-apt update && apt --yes install libzmq3-dev libgmp-dev libffi-dev
+set -e
 
 cd $CONDA_SRC && git clone https://github.com/zeromq/libzmq \
 && cd $CONDA_SRC/libzmq && mkdir cmake-build
@@ -27,3 +27,6 @@ ln -s $JULIA_PKGDIR/julia /usr/local/bin/julia
 cd /opt && curl -sSL https://get.haskellstack.org/ | sh \
 	&& git clone https://github.com/gibiansky/IHaskell \
 	&& chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
+
+mkdir -p /usr/lib/node_modules/ijavascript/node_modules/zeromq/zmq
+chown -R $DATASCI_USER:$DATASCI_USER /usr/lib/node_modules/
