@@ -31,7 +31,7 @@ RUN julia /tmp/package_installs.jl && bash /tmp/install_julia_pkgs_from_src.sh
 USER root 
 
 # ~~~~ CLEAN UP ~~~~
-RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean && \
+RUN apt update && apt --yes upgrade && apt --yes autoremove && apt clean && \
 	apt purge --auto-remove  --yes curl && \
 	rm -rf /var/lib/apt/lists/* && \
 	rm -rf /src/*.deb && \

@@ -28,7 +28,7 @@ RUN apt-get --yes update && apt-get --yes install rodeo pycharm-community vim
 RUN ln -s /opt/Rodeo/rodeo /usr/bin/
 
 # ~~~~ CLEAN UP ~~~~
-RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean && \
+RUN apt update && apt --yes upgrade && apt --yes autoremove && apt clean && \
 	apt purge --auto-remove  --yes curl && \
 	rm -rf /var/lib/apt/lists/* && \
 	rm -rf /src/*.deb && \
