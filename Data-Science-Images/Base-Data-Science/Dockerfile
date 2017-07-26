@@ -81,15 +81,15 @@ ENV IHaskell /opt/IHaskell
 
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
-# RUN rm -rf $CONDA_SRC/libzmq
-USER $DATASCI_USER
-# ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
-# RUN bash /tmp/install_julia_base_pkgs.sh
-# # Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
 
-# ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
-# ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
-# RUN bash /tmp/install_jupyter_kernels.sh
+USER $DATASCI_USER
+ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
+RUN bash /tmp/install_julia_base_pkgs.sh
+# Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
+
+ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
+ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
+RUN bash /tmp/install_jupyter_kernels.sh
 
 USER root 
 # ~~~~ CLEAN UP ~~~~
@@ -114,5 +114,4 @@ RUN bash /tmp/clean_conda_pip.sh
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
 
-# look at specifying where kernels are installed to
 # Add checksums where possible
