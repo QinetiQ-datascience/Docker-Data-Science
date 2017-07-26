@@ -13,8 +13,7 @@ MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 ENV DEBIAN_FRONTEND=noninteractive SHELL=/bin/bash NAME=base-data-science
 
 # The Basics
-RUN	apt --yes update && apt --yes upgrade
-RUN apt --yes install  aptitude apt-utils sudo locales  
+RUN	apt --yes update && apt --yes upgrade && apt --yes install  aptitude apt-utils sudo locales  
 
 # Locale
 RUN sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
