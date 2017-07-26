@@ -1,4 +1,4 @@
-# DataScience-Stack
+# Docker-Data-Science
 
 In progress, go to Data-Science-Images/Base-Data-Science
 
