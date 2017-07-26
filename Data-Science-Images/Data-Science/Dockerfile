@@ -5,8 +5,7 @@ MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 
 USER root
 
-ENV NLTK_DATA /usr/share/nltk_data
-ENV JULIA_PKGDIR /root/.julia/v0.6
+ENV NLTK_DATA=/usr/share/nltk_data
 
 ADD $IMAGES_DIR/Data-Science/Scripts/requirements.txt /tmp/requirements.txt
 ADD $IMAGES_DIR/Data-Science/Scripts/install_python_pkgs_from_src.sh /tmp/install_python_pkgs_from_src.sh

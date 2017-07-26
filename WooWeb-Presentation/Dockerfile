@@ -6,16 +6,18 @@ MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 USER root
 
 # Expose Ports
-EXPOSE 6006
-EXPOSE 5000
-EXPOSE 5006
+EXPOSE 6006 5000 5006
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
 RUN echo "deb http://rodeo-deb.yhat.com/ rodeo main\n" >> /etc/apt/sources.list
 RUN add-apt-repository ppa:mystic-mirage/pycharm
 
-RUN mkdir -p $HOME/Training
-RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME/Training 
+ENV Training=$HOME/Training
+
+RUN mkdir -p $Training
+RUN chown -R $DATASCI_USER:$DATASCI_USER $Training
+
+VOLUME ["$Documents", "$Downloads", "$Workspace", "$Training"]
 
 # Rodeo GUI Requirements
 RUN apt-get --yes update && apt-get --yes install  libxss1 libgconf-2-4 libnss3 libasound2
