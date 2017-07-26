@@ -19,9 +19,6 @@ RUN chown -R $DATASCI_USER:$DATASCI_USER $Training
 
 VOLUME ["$Documents", "$Downloads", "$Workspace", "$Training"]
 
-# Rodeo GUI Requirements
-RUN apt-get --yes update && apt-get --yes install  libxss1 libgconf-2-4 libnss3 libasound2
-
 # Install weka
 RUN apt-get --yes update && apt-get install --yes weka
 

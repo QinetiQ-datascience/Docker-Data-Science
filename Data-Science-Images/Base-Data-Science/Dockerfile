@@ -21,10 +21,12 @@ RUN sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
 
 ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
 
-ENV DATASCI_USER=datasci DATASCI_UID=1000 HOME=/home/$DATASCI_USER
-ENV CONDA_DIR=/opt/conda CONDA_BIN=$CONDA_DIR/bin CONDA_SRC=/usr/local/src/conda
+ENV DATASCI_USER=datasci DATASCI_UID=1000 
+ENV HOME=/home/$DATASCI_USER
+ENV CONDA_DIR=/opt/conda CONDA_SRC=/usr/local/src/conda
+ENV CONDA_BIN=$CONDA_DIR/bin 
 ENV PATH $CONDA_BIN:$HOME.local/bin:$PATH
-
+RUN echo "cond bin: $CONDA_BIN"
 ENV Documents=$HOME/Documents Downloads=$HOME/Downloads Workspace=$HOME/Workspace
 
 ADD Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
