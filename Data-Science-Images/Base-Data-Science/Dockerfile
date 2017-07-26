@@ -1,4 +1,11 @@
 FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
+##
+##  Influeces taken from:
+##  
+##	* jupyter/docker-stacks
+##	* Kaggle/docker-python
+##	* Kaggle/docker-rstats
+##	* Kaggle/docker-julia
 
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 
@@ -74,15 +81,15 @@ ENV IHaskell /opt/IHaskell
 
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
-
+# RUN rm -rf $CONDA_SRC/libzmq
 USER $DATASCI_USER
-ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
-RUN bash /tmp/install_julia_base_pkgs.sh
-# Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
+# ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
+# RUN bash /tmp/install_julia_base_pkgs.sh
+# # Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
 
-ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
-ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
-RUN bash /tmp/install_jupyter_kernels.sh
+# ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
+# ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
+# RUN bash /tmp/install_jupyter_kernels.sh
 
 USER root 
 # ~~~~ CLEAN UP ~~~~
@@ -90,8 +97,8 @@ USER root
 RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean \
 	&& apt purge --auto-remove  -y curl \
 	&& rm -rf /var/lib/apt/lists/* \
-    && rm -rf /src/*.deb \
-    && rm -rf $CONDA_SRC/*
+    && rm -rf /src/*.deb 
+    # && rm -rf $CONDA_SRC/*
 #     
 # Expose Port For Jupyter
 EXPOSE 8888-9000

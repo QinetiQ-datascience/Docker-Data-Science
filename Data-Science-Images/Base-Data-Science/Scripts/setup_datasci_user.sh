@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 useradd -m --shell /bin/bash --uid $DATASCI_UID --user-group $DATASCI_USER 

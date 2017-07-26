@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 $CONDA_BIN/conda install --yes \

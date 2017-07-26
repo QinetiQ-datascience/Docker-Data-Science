@@ -1,12 +1,11 @@
+#!/bin/bash
 set -e
 
-cd $CONDA_SRC && git clone https://github.com/zeromq/libzmq \
-&& cd $CONDA_SRC/libzmq && mkdir cmake-build
-
-cd $CONDA_SRC/libzmq/cmake-build \
-&& cmake .. && make -j 4 \
-&& make test && make install && ldconfig \
-rm -rf $CONDA_SRC/libzmq
+cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
+cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
+cd $CONDA_SRC/libzmq && make check
+cd $CONDA_SRC/libzmq && make install && ldconfig
+rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
 
 apt update && apt --yes install octave scala
 

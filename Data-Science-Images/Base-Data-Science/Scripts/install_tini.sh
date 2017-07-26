@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 mkdir -p $TINI_DIR
