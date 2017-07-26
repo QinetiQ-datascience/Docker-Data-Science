@@ -1,5 +1,5 @@
 
-FROM joshcole/base-data-science:latest
+FROM joshcole/spark-data-science:latest
 
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 
@@ -22,17 +22,6 @@ ADD $IMAGES_DIR/Data-Science/Scripts/package_installs.R /tmp/package_installs.R
 RUN mkdir -p $CONDA_SRC && mkdir $NLTK_DATA
 RUN chown -R $DATASCI_USER:$DATASCI_USER $CONDA_SRC && chown -R $DATASCI_USER:$DATASCI_USER $NLTK_DATA
 
-# Clean up
-RUN apt-get --yes update && apt-get --yes upgrade && apt-get --yes autoremove
-RUN apt-get clean \
-		&& apt-get purge --auto-remove  -y curl \
-		&& rm -rf /var/lib/apt/lists/* \
-        && rm -rf /src/*.deb
-
-# ~~~~ CLEAN UP ~~~~
-
-RUN apt-get autoremove --yes && apt-get clean
-
 USER $DATASCI_USER
 
 RUN bash /tmp/anaconda-install_pkgs_from_src.sh
@@ -40,8 +29,20 @@ RUN $CONDA_BIN/pip install -r /tmp/requirements.txt --upgrade
 
 RUN julia /tmp/package_installs.jl && bash /tmp/install_julia_pkgs_from_src.sh
 
+USER root 
 
-RUN rm -rf $HOME/.cache/pip/*
-RUN $CONDA_BIN/conda clean -i -l -t --yes
+# ~~~~ CLEAN UP ~~~~
+RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean \
+	&& apt purge --auto-remove  -y curl \
+	&& rm -rf /var/lib/apt/lists/* \
+    && rm -rf /src/*.deb \
+    && rm -rf $CONDA_SRC/*
 
-CMD /bin/bash
+RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME
+
+USER $DATASCI_USER
+
+RUN rm -rf $HOME/.cache/pip/* && $CONDA_BIN/conda clean -i -l -t --yes
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/bin/bash"]

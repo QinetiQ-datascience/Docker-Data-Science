@@ -21,4 +21,4 @@ docker run --rm \
     -p 6006:6006 \
     --device /dev/snd \
     --name $USER_NAME \
-    joshcole/wooweb-presentation-cpu:latest
+    qinetiq/wooweb-presentation-cpu:latest

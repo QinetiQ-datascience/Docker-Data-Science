@@ -32,6 +32,7 @@ Jupyter Kernels:
  - Scala
  - Java (jdk8)
  - Haskell (In Progress)
+ - javascript
 
 Jupyter Widgets
 

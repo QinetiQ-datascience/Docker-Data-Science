@@ -11,4 +11,4 @@ docker run --rm \
     -v $HOME/Downloads:${HOME_DIR}/Downloads \
     -w $HOME_DIR \
     -p 8888-9000:8888-9000 \
-    joshcole/base-data-science
+    qinetiq/base-data-science:latest

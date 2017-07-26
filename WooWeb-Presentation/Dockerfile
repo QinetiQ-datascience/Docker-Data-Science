@@ -28,16 +28,12 @@ RUN apt-get --yes update && apt-get --yes install rodeo pycharm-community vim
 
 RUN ln -s /opt/Rodeo/rodeo /usr/bin/
 
-# Clean up
-RUN apt-get --yes update && apt-get --yes upgrade && apt-get --yes autoremove
-RUN apt-get clean \
-		&& apt-get purge --auto-remove  -y curl \
-		&& rm -rf /var/lib/apt/lists/* \
-        && rm -rf /src/*.deb
-
 # ~~~~ CLEAN UP ~~~~
-
-RUN apt-get autoremove --yes && apt-get clean
+RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean \
+	&& apt purge --auto-remove  -y curl \
+	&& rm -rf /var/lib/apt/lists/* \
+    && rm -rf /src/*.deb \
+    && rm -rf $CONDA_SRC/*
 
 USER $DATASCI_USER
 

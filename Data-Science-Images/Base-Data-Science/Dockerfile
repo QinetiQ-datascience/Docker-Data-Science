@@ -32,7 +32,7 @@ ENV HOME /home/$DATASCI_USER
 
 ENV CONDA_DIR /opt/conda
 ENV CONDA_BIN $CONDA_DIR/bin
-ENV PATH $CONDA_BIN:$PATH
+ENV PATH $CONDA_BIN:$HOME.local/bin:$PATH
 ENV CONDA_SRC /usr/local/src/conda
 
 ADD Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
@@ -85,31 +85,34 @@ RUN bash /tmp/languages_setup.sh
 USER $DATASCI_USER
 ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 RUN bash /tmp/install_julia_base_pkgs.sh
-# Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
 
+# Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
 ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
 ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
 RUN bash /tmp/install_jupyter_kernels.sh
 
 USER root 
-# ~~~~ CLEAN UP ~~~~
 
+# ~~~~ CLEAN UP ~~~~
 RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean \
 	&& apt purge --auto-remove  -y curl \
 	&& rm -rf /var/lib/apt/lists/* \
-    && rm -rf /src/*.deb 
-    # && rm -rf $CONDA_SRC/*
-#     
-# Expose Port For Jupyter
-EXPOSE 8888-9000
+    && rm -rf /src/*.deb \
+    && rm -rf $CONDA_SRC/*
+
+RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME
 
 COPY Scripts/jupyter_notebook_config.py /etc/jupyter/
 RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 
+# Expose Port For Jupyter
+EXPOSE 8888-9000
+
+
+
 USER $DATASCI_USER
 
-ADD Scripts/clean_conda_pip.sh /tmp/clean_conda_pip.sh
-RUN bash /tmp/clean_conda_pip.sh
+RUN rm -rf $HOME/.cache/pip/* && $CONDA_BIN/conda clean -i -l -t --yes
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]

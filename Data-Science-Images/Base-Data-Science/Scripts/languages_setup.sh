@@ -27,5 +27,7 @@ cd /opt && curl -sSL https://get.haskellstack.org/ | sh \
 	&& git clone https://github.com/gibiansky/IHaskell \
 	&& chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
 
+npm install -g ijavascript
+
 mkdir -p /usr/lib/node_modules/ijavascript/node_modules/zeromq/zmq
 chown -R $DATASCI_USER:$DATASCI_USER /usr/lib/node_modules/

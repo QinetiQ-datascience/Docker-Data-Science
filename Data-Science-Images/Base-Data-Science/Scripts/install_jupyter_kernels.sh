@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-npm install -g ijavascript
+ijsinstall
 
 $CONDA_BIN/pip install -r /tmp/requirements_kernel.txt
 
