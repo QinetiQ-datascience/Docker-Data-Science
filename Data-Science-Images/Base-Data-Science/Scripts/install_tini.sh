@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# TODO Fix Checksum
+# 
 mkdir -p $TINI_DIR
 cd $TINI_DIR
 wget --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini

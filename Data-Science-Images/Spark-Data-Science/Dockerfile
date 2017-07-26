@@ -22,12 +22,12 @@ RUN bash /tmp/install_jupyter_kernels.sh
 USER root 
 
 # ~~~~ CLEAN UP ~~~~
-RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean \
-	&& apt purge --auto-remove  -y curl \
-	&& rm -rf /var/lib/apt/lists/* \
-    && rm -rf /src/*.deb \
-    && rm -rf $CONDA_SRC/* \
-    && rm -rf /tmp/*
+RUN apt --yes update && apt --yes upgrade && apt --yes autoremove && apt clean && \
+	apt purge --auto-remove  --yes curl && \
+	rm -rf /var/lib/apt/lists/* && \
+	rm -rf /src/*.deb && \
+    rm -rf $CONDA_SRC/* && \
+    rm -rf /tmp/*
 
 RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME
 
