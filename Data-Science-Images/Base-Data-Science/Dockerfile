@@ -10,10 +10,7 @@ FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 
 # Configure environment
-ENV DEBIAN_FRONTEND=noninteractive
-
-ENV SHELL /bin/bash
-ENV NAME base-data-science
+ENV DEBIAN_FRONTEND=noninteractive SHELL=/bin/bash NAME=base-data-science
 
 # The Basics
 RUN	apt --yes update && apt --yes upgrade
@@ -22,39 +19,30 @@ RUN apt --yes install  aptitude apt-utils sudo locales
 # Locale
 RUN sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen
-ENV LANG en_GB.UTF-8  
-ENV LANGUAGE en_GB:en  
-ENV LC_ALL en_GB.UTF-8
 
-ENV DATASCI_USER datasci
-ENV DATASCI_UID 1000
-ENV HOME /home/$DATASCI_USER
+ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
 
-ENV CONDA_DIR /opt/conda
-ENV CONDA_BIN $CONDA_DIR/bin
+ENV DATASCI_USER=datasci DATASCI_UID=1000 HOME=/home/$DATASCI_USER
+ENV CONDA_DIR=/opt/conda CONDA_BIN=$CONDA_DIR/bin CONDA_SRC=/usr/local/src/conda
 ENV PATH $CONDA_BIN:$HOME.local/bin:$PATH
-ENV CONDA_SRC /usr/local/src/conda
-ENV Documents $HOME/Documents
-ENV Downloads $HOME/Downloads
-ENV Workspace $HOME/Workspace
+
+ENV Documents=$HOME/Documents Downloads=$HOME/Downloads Workspace=$HOME/Workspace
 
 ADD Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh
 
+VOLUME ["$Documents", "$Downloads", "$Workspace"]
+
 ADD Scripts/linux_setup.sh /tmp/linux_setup.sh
 RUN bash /tmp/linux_setup.sh
 
-ENV SAGE_ROOT /usr/lib/sagemath/
-ENV JUPYTER_SHARE /usr/local/share/jupyter
-ENV USER_JUPYTER_KERNELS $HOME/.jupyter/kernels
+ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
 
 ADD Scripts/install_sagemath.sh /tmp/install_sagemath.sh
 RUN bash /tmp/install_sagemath.sh
 
 # SHA Currently failing
-ENV TINI_VERSION v0.15.0
-ENV TINI_CHECKSUM 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7
-ENV TINI_DIR /opt/tini
+ENV TINI_VERSION=v0.15.0 TINI_CHECKSUM=595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 TINI_DIR=/opt/tini
 
 ADD Scripts/install_tini.sh /tmp/install_tini.sh
 RUN bash /tmp/install_tini.sh
@@ -79,8 +67,7 @@ RUN bash /tmp/install_conda_r.sh
 
 USER root
 
-ENV JULIA_PKGDIR /opt/julia
-ENV IHaskell /opt/IHaskell
+ENV JULIA_PKGDIR=/opt/julia IHaskell=/opt/IHaskell
 
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
@@ -111,8 +98,6 @@ RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 
 # Expose Port For Jupyter
 EXPOSE 8888-9000
-
-
 
 USER $DATASCI_USER
 
