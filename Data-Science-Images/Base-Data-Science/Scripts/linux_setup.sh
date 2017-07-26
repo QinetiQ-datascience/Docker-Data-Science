@@ -9,23 +9,22 @@ apt --yes update && apt --yes install  wget curl unzip zip bzip2 fonts-liberatio
 # Install Java
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
 	add-apt-repository --yes ppa:webupd8team/java && \
-	apt update && \
-	apt install --yes  oracle-java8-installer && \
-    apt install --yes oracle-java8-set-default && \
+	apt --yes update && \
+	apt install --yes  oracle-java8-installer oracle-java8-set-default && \
 	rm -rf /var/lib/apt/lists/* && \
 	rm -rf /var/cache/oracle-jdk8-installer
 
 # Install Nodejs
 # curl -sL https://deb.nodesource.com/setup_8.x | bash - &&  apt update && apt --yes install nodejs
-apt install --yes nodejs-legacy npm
+apt --yes update && apt install --yes nodejs-legacy npm
 
 # Version control
-apt install --yes git subversion mercurial --no-install-recommends
+apt --yes update && apt install --yes git subversion mercurial --no-install-recommends
 
 # Documentation generation requirements for jupyter
-apt update && apt --yes install texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-generic-recommended pandoc --no-install-recommends
+apt --yes update && apt --yes install texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-generic-recommended pandoc --no-install-recommends
 
-apt --yes install graphviz gnuplot --fix-missing
+apt --yes update && apt --yes install graphviz gnuplot --fix-missing
 
 # Install Boost
 apt --yes update && add-apt-repository universe && apt --yes update && apt --yes install  libboost-all-dev
