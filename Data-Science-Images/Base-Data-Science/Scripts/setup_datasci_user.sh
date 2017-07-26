@@ -12,5 +12,6 @@ chown -R $DATASCI_USER:$DATASCI_USER $CONDA_DIR
 echo "$DATASCI_USER:$DATASCI_USER"|chpasswd && adduser $DATASCI_USER sudo
 echo "root:Docker!" | chpasswd
 mkdir -p $CONDA_SRC && chown -R $DATASCI_USER:$DATASCI_USER $CONDA_SRC
-mkdir -p $HOME/Workspace && chown -R $DATASCI_USER:$DATASCI_USER $HOME/Workspace
-mkdir -p $HOME/Downloads && chown -R $DATASCI_USER:$DATASCI_USER $HOME/Downloads
+mkdir -p $Documents && chown -R $DATASCI_USER:$DATASCI_USER $Documents
+mkdir -p $Downloads && chown -R $DATASCI_USER:$DATASCI_USER $Downloads
+mkdir -p $Workspace && chown -R $DATASCI_USER:$DATASCI_USER $Workspace

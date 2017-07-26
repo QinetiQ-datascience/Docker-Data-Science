@@ -1,8 +1,7 @@
-# Docker-Data-Science
+Docker-Data-Science Build!
+===================
 
-In progress, go to Data-Science-Images/Base-Data-Science
+How to build:
+In the top level directory (Docker-Data-Science), run:
 
-Install Docker:
-Windows/Mac: https://www.docker.com/community-edition
-Linux: https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
-to build run docker-compose build
+ - docker-compose build

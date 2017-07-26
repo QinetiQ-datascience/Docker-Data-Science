@@ -1,9 +1,7 @@
-# DataScience-Stack
+Spark Data Science Docker Image!
+===================
 
-## Build docker container
-docker build -t datasci .
+Spark:
 
-## Run Container
-Copy Workspace to home directory
-Do Source stuff last
-Run: ./datasci
+ - Apache Toree https://toree.apache.org/
+ - spylon-kernel https://github.com/maxpoint/spylon-kernel

@@ -34,6 +34,9 @@ ENV CONDA_DIR /opt/conda
 ENV CONDA_BIN $CONDA_DIR/bin
 ENV PATH $CONDA_BIN:$HOME.local/bin:$PATH
 ENV CONDA_SRC /usr/local/src/conda
+ENV Documents $HOME/Documents
+ENV Downloads $HOME/Downloads
+ENV Workspace $HOME/Workspace
 
 ADD Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh

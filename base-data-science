@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# Should be platform neutral - at least working on Linux and Windows
 USER_NAME="datasci"
 HOME_DIR="/home/$USER_NAME"
 
@@ -8,6 +7,7 @@ HOME_DIR="/home/$USER_NAME"
 # --rm will remove the container as soon as it ends
 docker run --rm \
     -i -t \
+    -v $HOME/Documents:${HOME_DIR}/Documents \
     -v $HOME/Downloads:${HOME_DIR}/Downloads \
     -w $HOME_DIR \
     -p 8888-9000:8888-9000 \
