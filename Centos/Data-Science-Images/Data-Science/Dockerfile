@@ -31,8 +31,8 @@ RUN julia /tmp/package_installs.jl && bash /tmp/install_julia_pkgs_from_src.sh
 USER root 
 
 # ~~~~ CLEAN UP ~~~~
-RUN apt update && apt --yes upgrade && apt --yes autoremove && apt clean && \
-	apt purge --auto-remove  --yes curl && \
+RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-get clean && \
+	apt-get purge --auto-remove  --yes curl && \
 	rm -rf /var/lib/apt/lists/* && \
 	rm -rf /src/*.deb && \
     rm -rf $CONDA_SRC/* && \

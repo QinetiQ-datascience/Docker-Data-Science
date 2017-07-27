@@ -7,13 +7,18 @@ cd $CONDA_SRC/libzmq && make check
 cd $CONDA_SRC/libzmq && make install && ldconfig
 rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
 
-apt update && apt --yes install octave scala
+cd $CONDA_SRC/ && wget ftp://ftp.gnu.org/gnu/octave/{$OCTAVE_VERSION}.tar.gz && \
+tar xf {$OCTAVE_VERSION}.tar.gz && rm {$OCTAVE_VERSION}.tar.gz && \
+cd {$OCTAVE_VERSION}/ && ./configure && make -j4 && make install
+rm -rf $CONDA_SRC/{$OCTAVE_VERSION}
+
+
+apt-get update && apt-get --yes install scala
 
 # Show Julia where conda libraries are andß Create JULIA_PKGDIR 
 echo "deb http://ppa.launchpad.net/staticfloat/juliareleases/ubuntu trusty main" > /etc/apt/sources.list.d/julia.list && \
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3D3D3ACC && \
-apt update && \
-apt install -y --no-install-recommends \
+apt-get update && apt-get install -y --no-install-recommends \
 julia && apt clean && \
 rm -rf /var/lib/apt/lists/* && \
 

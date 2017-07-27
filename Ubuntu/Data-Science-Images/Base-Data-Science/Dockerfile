@@ -13,7 +13,7 @@ MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 ENV DEBIAN_FRONTEND=noninteractive SHELL=/bin/bash NAME=base-data-science
 
 # The Basics
-RUN	apt update && apt --yes upgrade && apt --yes install aptitude apt-utils sudo locales  
+RUN	apt-get update && apt-get --yes upgrade && apt-get --yes install aptitude apt-utils sudo locales  
 
 # Locale
 RUN sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -26,13 +26,14 @@ ENV HOME=/home/$DATASCI_USER
 ENV CONDA_DIR=/opt/conda CONDA_SRC=/usr/local/src/conda
 ENV CONDA_BIN=$CONDA_DIR/bin 
 ENV PATH $CONDA_BIN:$HOME.local/bin:$PATH
-RUN echo "cond bin: $CONDA_BIN"
 ENV Documents=$HOME/Documents Downloads=$HOME/Downloads Workspace=$HOME/Workspace
 
 ADD Scripts/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh
 
 VOLUME ["$Documents", "$Downloads", "$Workspace"]
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 
 ADD Scripts/linux_setup.sh /tmp/linux_setup.sh
 RUN bash /tmp/linux_setup.sh
@@ -68,7 +69,7 @@ RUN bash /tmp/install_conda_r.sh
 
 USER root
 
-ENV JULIA_PKGDIR=/opt/julia IHaskell=/opt/IHaskell
+ENV JULIA_PKGDIR=/opt/julia IHaskell=/opt/IHaskell OCTAVE_VERSION=octave-4.2.1
 
 ADD Scripts/languages_setup.sh /tmp/languages_setup.sh
 RUN bash /tmp/languages_setup.sh
@@ -85,9 +86,9 @@ RUN bash /tmp/install_jupyter_kernels.sh
 USER root 
 
 # ~~~~ CLEAN UP ~~~~
-RUN apt update && apt --yes upgrade && apt --yes autoremove && apt clean && \
-	apt purge --auto-remove  --yes curl && \
-	rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-get clean && \
+	apt-get purge --auto-remove  --yes curl && \
+	rm -rf /var/lib/apt-get/lists/* && \
 	rm -rf /src/*.deb && \
     rm -rf $CONDA_SRC/* && \
     rm -rf /tmp/*
@@ -108,3 +109,8 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
 
 # Add checksums where possible
+# Edit /etc/docker/daemon.json. If it does not yet exist, create it. Assuming that the file was empty, add the following contents.
+
+# {
+#   "storage-driver": "overlay2"
+# }

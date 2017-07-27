@@ -1,15 +1,15 @@
 version: '2'
 services:
   base-data-science:
-    container_name: base-data-science
+    container_name: ubuntu-base-data-science
     build:
-      context: ../Data-Science-Images/Base-Data-Science/
+      context: ../Ubuntu/Data-Science-Images/Base-Data-Science/
       dockerfile: Dockerfile
-    image: qinetiq/base-data-science:latest
+    image: qinetiq/ubuntu-base-data-science:latest
 
-  spark-data-science:
-    container_name: spark-data-science
-    build:
-      context: ../Data-Science-Images/Spark-Data-Science/
-      dockerfile: Dockerfile
-    image: qinetiq/spark-data-science:latest
+  # spark-data-science:
+  #   container_name: spark-data-science
+  #   build:
+  #     context: ../Data-Science-Images/Spark-Data-Science/
+  #     dockerfile: Dockerfile
+  #   image: qinetiq/spark-data-science:latest
