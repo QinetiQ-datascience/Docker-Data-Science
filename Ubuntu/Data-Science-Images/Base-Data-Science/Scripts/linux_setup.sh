@@ -39,7 +39,6 @@ libtiff5 \
 libxcomposite1 \
 libxslt1.1 \
 littler 
-littler 
 
 apt-get update && apt-get --yes build-dep octave liboctave-dev
 
