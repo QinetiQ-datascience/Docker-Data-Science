@@ -1,0 +1,14 @@
+#!/bin/sh
+
+USER_NAME="datasci"
+HOME_DIR="/home/$USER_NAME"
+
+# Users home is mounted as home
+# --rm will remove the container as soon as it ends
+docker run --rm \
+    -i -t \
+    -v $HOME/Documents:${HOME_DIR}/Documents \
+    -v $HOME/Downloads:${HOME_DIR}/Downloads \
+    -w $HOME_DIR \
+    -p 8888-9000:8888-9000 \
+    centos-base-datascience
