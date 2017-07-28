@@ -50,18 +50,18 @@ ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
 ADD Scripts/Languages/Python/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
-# # Might be bad to blindly update all packages
-# ADD Scripts/Languages/Python/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-# RUN bash /tmp/update_conda_pip_pkgs.sh
+# Might be bad to blindly update all packages
+ADD Scripts/Languages/Python/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
+RUN bash /tmp/update_conda_pip_pkgs.sh
 
-# ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-# RUN bash /tmp/install_jupyter_widgets.sh
+ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
+RUN bash /tmp/install_jupyter_widgets.sh
 
-# ADD Scripts/Languages/R/install_conda_r.sh /tmp/install_conda_r.sh
-# RUN bash /tmp/install_conda_r.sh
+ADD Scripts/Languages/R/install_conda_r.sh /tmp/install_conda_r.sh
+RUN bash /tmp/install_conda_r.sh
 
 # USER root
-ENV SCALA_VERSION=2.12.2 ENV SBT_VERSION=0.13.15 SCALA_HOME=/usr/local/share/scala
+ENV SCALA_VERSION=2.12.2 SBT_VERSION=0.13.15 SCALA_HOME=/usr/local/share/scala
 ENV PATH $SCALA_HOME/bin:$PATH
 # ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
 
@@ -94,7 +94,7 @@ RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-g
 
 RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME
 
-COPY Scripts/jupyter_notebook_config.py /etc/jupyter/
+COPY Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 
 # Expose Port For Jupyter
@@ -102,7 +102,7 @@ EXPOSE 8888-9000
 
 USER $DATASCI_USER
 
-RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
+# RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
 RUN rm -rf $HOME/.cache/pip/* && $CONDA_BIN/conda clean -i -l -t --yes
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
