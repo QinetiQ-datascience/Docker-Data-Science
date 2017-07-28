@@ -5,5 +5,4 @@ set -e
 apt-get update && apt-get install --yes nodejs-legacy npm
 
 npm install -g ijavascript
-
-su - $DATASCI_USER -c "ijsinstall"
+su - $DATASCI_USER && ijsinstall && exit

@@ -60,27 +60,33 @@ RUN bash /tmp/install_jupyter_widgets.sh
 ADD Scripts/Languages/R/install_conda_r.sh /tmp/install_conda_r.sh
 RUN bash /tmp/install_conda_r.sh
 
-# USER root
-ENV SCALA_VERSION=2.12.2 SBT_VERSION=0.13.15 SCALA_HOME=/usr/local/share/scala
+USER root
+
+ENV SCALA_VERSION=2.10.0 SBT_VERSION=0.13.15 SCALA_HOME=/usr/local/share/scala
 ENV PATH $SCALA_HOME/bin:$PATH
-# ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
+
+ADD Scripts/Languages/Scala/install_scala.sh /tmp/install_scala.sh
+RUN bash /tmp/install_scala.sh
+
+ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
 
 # ADD Scripts/SageMath/install_sagemath.sh /tmp/install_sagemath.sh
 # RUN bash /tmp/install_sagemath.sh
 
-# ENV JULIA_PKGDIR=/opt/julia IHaskell=/opt/IHaskell OCTAVE_VERSION=octave-4.2.1
+ENV JULIA_HOME=/usr/local/julia JULIA_VERSION=0.6.0
+# 
+# ENV IHaskell=/opt/IHaskell 
+# 
+# ENV OCTAVE_VERSION=octave-4.2.1
 
-# ADD Scripts/Languages/Javascript/install_javascript.sh /tmp/install_javascript.sh
-# RUN bash /tmp/install_javascript.sh
+ADD Scripts/Languages/Javascript/install_javascript.sh /tmp/install_javascript.sh
+RUN bash /tmp/install_javascript.sh
+
 
 # USER $DATASCI_USER
 # ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
 # RUN bash /tmp/install_julia_base_pkgs.sh
-
-# # Don't upgrade sagemath's pip, build breaks. Anaconda's is up to date
-# ADD Scripts/install_jupyter_kernels.sh /tmp/install_jupyter_kernels.sh
-# ADD Scripts/requirements_kernel.txt /tmp/requirements_kernel.txt
-# RUN bash /tmp/install_jupyter_kernels.sh
+# RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
 
 USER root 
 
@@ -102,7 +108,7 @@ EXPOSE 8888-9000
 
 USER $DATASCI_USER
 
-# RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
+
 RUN rm -rf $HOME/.cache/pip/* && $CONDA_BIN/conda clean -i -l -t --yes
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
@@ -114,39 +120,3 @@ CMD ["/bin/bash"]
 # {
 #   "storage-driver": "overlay2"
 # }
-# 
-# sudo apt-get update && sudo apt-get install --yes \
-# libblas-dev \
-# liblapack-dev \
-# libatlas-base-dev \
-# libxss1 \
-# libgconf-2-4 \
-# libnss3 \
-# libasound2 	\
-# hicolor-icon-theme \
-# fcitx-frontend-qt5 \
-# fcitx-modules \
-# fcitx-module-dbus \
-# libedit2 \
-# libgl1-mesa-dri \
-# libgl1-mesa-glx \
-# libgstreamer0.10-0 \
-# libgstreamer-plugins-base0.10-0 \
-# libjpeg-dev \
-# libpresage-data \
-# libqt5core5a \
-# libqt5dbus5 \
-# libqt5gui5 \
-# libqt5network5 \
-# libqt5printsupport5 \
-# libqt5webkit5 \
-# libqt5widgets5 \
-# libtiff5 \
-# libxcomposite1 \
-# libxslt1.1 \
-# littler 
-# 
-# 	rm -rf /var/lib/apt/lists/* && \
-	# rm -rf /var/cache/oracle-jdk8-installer;
-# 
-# add apt-get clean all

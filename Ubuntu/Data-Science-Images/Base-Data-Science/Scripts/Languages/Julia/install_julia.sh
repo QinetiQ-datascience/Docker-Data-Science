@@ -1,17 +1,14 @@
 #!/bin/bash
 set -e
 
-# Show Julia where conda libraries are andß Create JULIA_PKGDIR 
-echo "deb http://ppa.launchpad.net/staticfloat/juliareleases/ubuntu trusty main" > /etc/apt/sources.list.d/julia.list && \
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3D3D3ACC && \
-apt-get update && apt-get install -y --no-install-recommends \
-julia && apt-get clean && \
-rm -rf /var/lib/apt/lists/* && \
-
-echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /usr/etc/julia/juliarc.jl && \
-
-mkdir $JULIA_PKGDIR && \
-chown -R $DATASCI_USER:$DATASCI_USER $JULIA_PKGDIR
-ln -s $JULIA_PKGDIR/julia /usr/local/bin/julia
+mkdir $JULIA_HOME && cd /tmp \
+&& curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" -o julia.tar.gz \
+&& curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz.asc" -o julia.tar.gz.asc \
+&& export GNUPGHOME="$(mktemp -d)" \
+&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 3673DF529D9049477F76B37566E3C7DC03D6E495 \
+&& gpg --batch --verify julia.tar.gz.asc julia.tar.gz \
+&& rm -r "$GNUPGHOME" julia.tar.gz.asc \
+&& tar -xzf julia.tar.gz -C $JULIA_PATH --strip-components 1 \
+&& rm -rf /var/lib/apt/lists/* julia.tar.gz*
 
 su - $DATASCI_USER - c "bash /tmp/install_julia_base_pkgs.sh"
