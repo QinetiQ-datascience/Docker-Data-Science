@@ -26,67 +26,124 @@ ENV DATASCI_USER=datasci DATASCI_UID=1000
 ENV HOME=/home/$DATASCI_USER
 ENV CONDA_DIR=/opt/conda CONDA_SRC=/usr/local/src/conda
 ENV CONDA_BIN=$CONDA_DIR/bin 
-ENV PATH $CONDA_BIN:$HOME.local/bin:$PATH
+ENV PATH $CONDA_BIN:$HOME/.local/bin:$PATH
 ENV Documents=$HOME/Documents Downloads=$HOME/Downloads Workspace=$HOME/Workspace
 
 ADD Scripts/Linux_Config/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh
 
 VOLUME ["$Documents", "$Downloads", "$Workspace"]
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+    wget \
+    bzip2 \
+    unzip \
+    libgmp3-dev \
+    ca-certificates \
+    fonts-liberation \
+    software-properties-common \
+    python-software-properties \
+    build-essential \
+    automake \
+    autotools-dev \
+    cmake  \
+    gnuplot \
+    ghostscript \
+    graphviz \
+    less \
+    net-tools \
+    libboost-all-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-# SHA Currently failing
-ENV TINI_VERSION=v0.15.0 TINI_CHECKSUM=595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 TINI_DIR=/opt/tini
-
-ADD Scripts/Linux_Config/linux_configuration.sh /tmp/linux_configuration.sh
-ADD Scripts/Languages/Java/install_java.sh /tmp/install_java.sh
-RUN bash /tmp/linux_configuration.sh
-
-# Additional Languages
+# Version control
+RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
 
 USER $DATASCI_USER
 ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
 
-ADD Scripts/Languages/Python/install_anaconda.sh /tmp/install_anaconda.sh
+ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
+RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk 
+
+RUN $CONDA_BIN/conda install --yes -c conda-forge \
+	nodejs \
+	r-essentials \
+	r-xgboost \
+	r-irkernel \
+	r-devtools \
+	r-codetools \
+	r-cvtools \
+	r-udunits2 \
+	octave \
+	stack
+
+RUN $CONDA_BIN/conda install --yes -c anaconda-cluster scala
+RUN $CONDA_BIN/conda install --yes -c bioconda julia && \
+	julia -e 'Pkg.init()' && \
+	julia -e 'Pkg.update()' && \
+	julia -e 'Pkg.add("HDF5")' && \
+	julia -e 'Pkg.add("Gadfly")' && \
+	julia -e 'Pkg.add("RDatasets")' && \
+	julia -e 'Pkg.add("IJulia")' && \
+
+	julia -e 'using HDF5' && \
+	julia -e 'using Gadfly' && \
+	julia -e 'using RDatasets' && \
+	julia -e 'using IJulia'
+
+ENV $CONDA_SRC/IHaskell=/opt/IHaskell
+
+RUN cd $CONDA_SRC && git clone https://github.com/gibiansky/IHaskell
+
+RUN cd $IHaskell && \
+stack init && \
+stack setup && \
+stack config set system-ghc --global true && \
+stack install gtk2hs-buildtools && \
+stack install --fast && \
+stack exec ihaskell -- install --stack 
+
 # Might be bad to blindly update all packages
-ADD Scripts/Languages/Python/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
+ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 RUN bash /tmp/update_conda_pip_pkgs.sh
 
 ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/install_jupyter_widgets.sh
+# USER root
 
-ADD Scripts/Languages/R/install_conda_r.sh /tmp/install_conda_r.sh
-RUN bash /tmp/install_conda_r.sh
-
-USER root
-
-ENV SCALA_VERSION=2.10.0 SBT_VERSION=0.13.15 SCALA_HOME=/usr/local/share/scala
-ENV PATH $SCALA_HOME/bin:$PATH
-
-ADD Scripts/Languages/Scala/install_scala.sh /tmp/install_scala.sh
-RUN bash /tmp/install_scala.sh
-
-ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
+# ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
 
 # ADD Scripts/SageMath/install_sagemath.sh /tmp/install_sagemath.sh
 # RUN bash /tmp/install_sagemath.sh
 
-ENV JULIA_HOME=/usr/local/julia JULIA_VERSION=0.6.0
-# 
-# ENV IHaskell=/opt/IHaskell 
-# 
-# ENV OCTAVE_VERSION=octave-4.2.1
 
-ADD Scripts/Languages/Javascript/install_javascript.sh /tmp/install_javascript.sh
-RUN bash /tmp/install_javascript.sh
 
+# ENV IHaskell=/opt/IHaskell
+# cd /opt && curl -sSL https://get.haskellstack.org/ | sh && \
+# git clone https://github.com/gibiansky/IHaskell && \
+# chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
+
+# su - $DATASCI_USER && cd $IHaskell && \
+# stack setup && \
+# stack config set system-ghc --global true && \
+# stack install gtk2hs-buildtools && \
+# stack install --fast && \
+# stack exec ihaskell -- install --stack && exit
 
 # USER $DATASCI_USER
-# ADD Scripts/install_julia_base_pkgs.sh /tmp/install_julia_base_pkgs.sh
-# RUN bash /tmp/install_julia_base_pkgs.sh
+
 # RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
+
+# SHA Currently failing
+# ENV TINI_VERSION=v0.15.0 TINI_CHECKSUM=595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 TINI_DIR=/opt/tini
+
+# ADD Scripts/Linux_Config/linux_configuration.sh /tmp/linux_configuration.sh
+# RUN bash /tmp/linux_configuration.sh
+
+# Additional Languages
+
+# USER $DATASCI_USER
 
 USER root 
 
@@ -111,7 +168,7 @@ USER $DATASCI_USER
 
 RUN rm -rf $HOME/.cache/pip/* && $CONDA_BIN/conda clean -i -l -t --yes
 
-ENTRYPOINT ["/usr/bin/tini", "--"]
+# ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
 
 # Add checksums where possible
