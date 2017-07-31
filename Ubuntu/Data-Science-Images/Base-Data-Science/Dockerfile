@@ -64,7 +64,7 @@ ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
 ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
-RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk 
+RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk sbt
 
 RUN $CONDA_BIN/conda install --yes -c conda-forge \
 	nodejs \
