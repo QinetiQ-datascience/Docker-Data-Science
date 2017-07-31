@@ -57,6 +57,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 
 # Version control
 RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
+RUN chown -R $DATASCI_USER:$DATASCI_USER /opt
 
 USER $DATASCI_USER
 ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
@@ -92,24 +93,37 @@ RUN $CONDA_BIN/conda install --yes -c bioconda julia && \
 	julia -e 'using RDatasets' && \
 	julia -e 'using IJulia'
 
-ENV $CONDA_SRC/IHaskell=/opt/IHaskell
+ENV IHaskell=/opt/IHaskell
 
-RUN cd $CONDA_SRC && git clone https://github.com/gibiansky/IHaskell
+# RUN $CONDA_BIN/conda install --yes -c bioconda ghc
+RUN stack setup
+RUN stack config set system-ghc --global true
 
-RUN cd $IHaskell && \
-stack init && \
-stack setup && \
-stack config set system-ghc --global true && \
-stack install gtk2hs-buildtools && \
-stack install --fast && \
-stack exec ihaskell -- install --stack 
+RUN cd /opt && git clone https://github.com/gibiansky/IHaskell
+RUN cd $IHaskell && stack install gtk2hs-buildtools
+
+USER root 
+RUN apt-get update && apt-get --yes install libghc-magic-dev libblas-dev liblapack-dev gfortran pkg-config libcairo2-dev libmagic-dev libghc-pango-dev libpango1.0-dev libzmq-dev libtool-bin
+
+RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
+RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
+RUN cd $CONDA_SRC/libzmq && make check
+RUN cd $CONDA_SRC/libzmq && make install && ldconfig
+RUN rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
+USER $DATASCI_USER
+
+RUN cd $IHaskell && stack install --fast
+RUN cd $IHaskell && stack exec ihaskell -- install --stack 
 
 # Might be bad to blindly update all packages
 ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 RUN bash /tmp/update_conda_pip_pkgs.sh
 
+RUN $CONDA_BIN/conda install --yes -c anaconda boost
+
 ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/install_jupyter_widgets.sh
+
 # USER root
 
 # ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
@@ -149,13 +163,12 @@ USER root
 
 # ~~~~ CLEAN UP ~~~~
 RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-get clean && \
-	apt-get purge --auto-remove  --yes curl && \
 	rm -rf /var/lib/apt-get/lists/* && \
 	rm -rf /src/*.deb && \
     rm -rf $CONDA_SRC/* && \
     rm -rf /tmp/*
 
-RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME
+# RUN chown -R $DATASCI_USER:$DATASCI_USER $HOME
 
 COPY Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
