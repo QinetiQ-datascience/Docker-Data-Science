@@ -51,13 +51,29 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     graphviz \
     less \
     net-tools \
-    libboost-all-dev && \
+    libboost-all-dev \
+    libghc-magic-dev \
+    libblas-dev \
+    liblapack-dev \
+    gfortran \
+    pkg-config \
+    libcairo2-dev \
+    libmagic-dev \
+    libghc-pango-dev \
+    libpango1.0-dev \
+    libzmq-dev \
+    libtool-bin && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Version control
 RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
 RUN chown -R $DATASCI_USER:$DATASCI_USER /opt
+
+RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
+RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
+RUN cd $CONDA_SRC/libzmq && make check && make install && ldconfig
+RUN rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
 
 USER $DATASCI_USER
 ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
@@ -101,16 +117,6 @@ RUN stack config set system-ghc --global true
 
 RUN cd /opt && git clone https://github.com/gibiansky/IHaskell
 RUN cd $IHaskell && stack install gtk2hs-buildtools
-
-USER root 
-RUN apt-get update && apt-get --yes install libghc-magic-dev libblas-dev liblapack-dev gfortran pkg-config libcairo2-dev libmagic-dev libghc-pango-dev libpango1.0-dev libzmq-dev libtool-bin
-
-RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
-RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
-RUN cd $CONDA_SRC/libzmq && make check
-RUN cd $CONDA_SRC/libzmq && make install && ldconfig
-RUN rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
-USER $DATASCI_USER
 
 RUN cd $IHaskell && stack install --fast
 RUN cd $IHaskell && stack exec ihaskell -- install --stack 
