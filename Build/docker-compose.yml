@@ -7,12 +7,12 @@ services:
       dockerfile: Dockerfile
     image: qinetiq/ubuntu-base-data-science:latest
 
-  centos-base-data-science:
-    container_name: centos-base-data-science
-    build:
-      context: ../Centos/Data-Science-Images/Base-Data-Science/
-      dockerfile: Dockerfile
-    image: qinetiq/centos-base-data-science:latest
+  # centos-base-data-science:
+  #   container_name: centos-base-data-science
+  #   build:
+  #     context: ../Centos/Data-Science-Images/Base-Data-Science/
+  #     dockerfile: Dockerfile
+  #   image: qinetiq/centos-base-data-science:latest
     
   # spark-data-science:
   #   container_name: spark-data-science

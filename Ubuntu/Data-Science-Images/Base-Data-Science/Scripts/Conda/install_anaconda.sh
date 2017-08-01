@@ -11,8 +11,8 @@ set -e
 # Install conda as datasci
 cd /tmp && \
 wget --quiet https://repo.continuum.io/archive/$ANACONDA_VERSION.sh -O /tmp/anaconda.sh && \
-bash /tmp/anaconda.sh -f -b -p $CONDA_DIR && \
-rm /tmp/anaconda.sh && \
+bash /tmp/anaconda.sh -f -b -p $CONDA_DIR && rm /tmp/anaconda.sh
+
 $CONDA_BIN/conda config --system --add channels conda-forge && \
 $CONDA_BIN/conda config --system --set auto_update_conda false && \
 $CONDA_BIN/conda clean -tipsy

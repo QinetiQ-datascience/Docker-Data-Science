@@ -37,45 +37,30 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     wget \
     bzip2 \
     unzip \
-    libgmp3-dev \
     ca-certificates \
     fonts-liberation \
     software-properties-common \
-    python-software-properties \
-    build-essential \
-    automake \
-    autotools-dev \
-    cmake  \
-    gnuplot \
-    ghostscript \
-    graphviz \
-    less \
-    net-tools \
-    libboost-all-dev \
-    libghc-magic-dev \
-    libblas-dev \
-    liblapack-dev \
-    gfortran \
-    pkg-config \
-    libcairo2-dev \
-    libmagic-dev \
-    libghc-pango-dev \
-    libpango1.0-dev \
-    libzmq-dev \
-    libtool-bin && \
+    python-software-properties && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Version control
 RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
 
-ENV IHaskell=/opt/IHaskell
-RUN cd /opt && git clone https://github.com/gibiansky/IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
+RUN apt-get update && apt-get --yes --no-install-recommends install texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-generic-recommended pandoc && \
+apt-get clean all && rm -rf /var/lib/apt/lists/*
 
-RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
-RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
-RUN cd $CONDA_SRC/libzmq && make check && make install && ldconfig
-RUN rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
+RUN apt-get update && apt-get --yes build-dep octave && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
+
+# Install Sage math
+RUN apt-add-repository -y ppa:aims/sagemath && apt-get update && apt-get --yes install sagemath-upstream-binary
+RUN chown -R $DATASCI_USER:$DATASCI_USER $SAGE_ROOT && mkdir -p $HOME/.sage && chown -R $DATASCI_USER:$DATASCI_USER $HOME/.sage && chmod -R 775 $HOME/.sage && \
+mkdir -p /usr/local/share/jupyter && chown -R $DATASCI_USER:$DATASCI_USER $JUPYTER_SHARE && chown -R $DATASCI_USER:$DATASCI_USER $JUPYTER_SHARE && \
+mkdir -p $USER_JUPYTER_KERNELS && chown -R $DATASCI_USER:$DATASCI_USER $USER_JUPYTER_KERNELS
 
 USER $DATASCI_USER
 ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
@@ -83,51 +68,97 @@ ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
 ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
-RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk sbt
+RUN $CONDA_BIN/conda install --yes -c salford_systems gcc-6 
+RUN $CONDA_BIN/conda install --yes -c conda-forge cmake automake pango libtool gnuplot ghostscript graphviz pkg-config \
+lapack blas readline xorg-libx11 xorg-libxau xorg-libxdmcp fig2dev libjpeg-turbo pcre arpack curl fftw fontconfig freetype glpk hdf5 \
+llvmdev zlib suitesparse qscintilla2 qt openjdk libpng lua lua-luaposix lua-luafilesystem xorg-libxrender
+RUN $CONDA_BIN/conda install --yes -c dlr-sc gl2ps
+RUN $CONDA_BIN/conda install --yes -c anaconda boost zeromq pyopengl mesa
+RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk sbt julia ghc graphicsmagick perl-gd
 
+# Languages
 RUN $CONDA_BIN/conda install --yes -c conda-forge \
 	nodejs \
-	r-essentials \
-	r-xgboost \
-	r-irkernel \
-	r-devtools \
-	r-codetools \
-	r-cvtools \
-	r-udunits2 \
 	octave \
 	stack
 
-RUN $CONDA_BIN/conda install --yes -c anaconda-cluster scala
-RUN $CONDA_BIN/conda install --yes -c bioconda julia && \
-	julia -e 'Pkg.init()' && \
-	julia -e 'Pkg.update()' && \
-	julia -e 'Pkg.add("HDF5")' && \
-	julia -e 'Pkg.add("Gadfly")' && \
-	julia -e 'Pkg.add("RDatasets")' && \
-	julia -e 'Pkg.add("IJulia")' && \
+# RUN $CONDA_BIN/conda install --yes -c anaconda-cluster scala
+# RUN $CONDA_BIN/conda install --yes -c conda-forge \
+# 	 \
+# 	r-essentials \
+# 	r-xgboost \
+# 	r-irkernel \
+# 	r-devtools \
+# 	r-codetools \
+# 	r-cvtools \
+# 	r-udunits2
+# USER root
 
-	julia -e 'using HDF5' && \
-	julia -e 'using Gadfly' && \
-	julia -e 'using RDatasets' && \
-	julia -e 'using IJulia'
+# RUN apt-get update && apt-get install -yq --no-install-recommends \
+#     libgmp3-dev \
+#     autotools-dev \
+#     gnuplot \
+#     ghostscript \
+#     graphviz \
+#     less \
+#     net-tools \
+#     libghc-magic-dev \
+#     libblas-dev \
+#     liblapack-dev \
+#     gfortran \
+#     pkg-config \
+#     libcairo2-dev \
+#     libmagic-dev \
+#     libghc-pango-dev \
+#     libpango1.0-dev \
+#     libzmq-dev \
+#     libtool-bin && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
+# # Version control
+# RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
+
+# ENV IHaskell=/opt/IHaskell
+# RUN cd /opt && git clone https://github.com/gibiansky/IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
+
+# RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
+# RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
+# RUN cd $CONDA_SRC/libzmq && make check && make install && ldconfig
+# RUN rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
+
+
+# USER $DATASCI_USER
 
 
 
-# RUN $CONDA_BIN/conda install --yes -c bioconda ghc
-RUN stack setup
-RUN stack config set system-ghc --global true
+
+# 	julia -e 'Pkg.init()' && \
+# 	julia -e 'Pkg.update()' && \
+# 	julia -e 'Pkg.add("HDF5")' && \
+# 	julia -e 'Pkg.add("Gadfly")' && \
+# 	julia -e 'Pkg.add("RDatasets")' && \
+# 	julia -e 'Pkg.add("IJulia")' && \
+
+# 	julia -e 'using HDF5' && \
+# 	julia -e 'using Gadfly' && \
+# 	julia -e 'using RDatasets' && \
+# 	julia -e 'using IJulia'
 
 
-RUN cd $IHaskell && stack install gtk2hs-buildtools
+# RUN stack setup
+# RUN stack config set system-ghc --global true
 
-RUN cd $IHaskell && stack install --fast
-RUN cd $IHaskell && stack exec ihaskell -- install --stack 
 
-# Might be bad to blindly update all packages
-ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-RUN bash /tmp/update_conda_pip_pkgs.sh
+# RUN cd $IHaskell && stack install gtk2hs-buildtools
 
-RUN $CONDA_BIN/conda install --yes -c anaconda boost
+# RUN cd $IHaskell && stack install --fast
+# RUN cd $IHaskell && stack exec ihaskell -- install --stack 
+
+# # Might be bad to blindly update all packages
+# ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
+# RUN bash /tmp/update_conda_pip_pkgs.sh
+
 
 ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
 RUN bash /tmp/install_jupyter_widgets.sh
