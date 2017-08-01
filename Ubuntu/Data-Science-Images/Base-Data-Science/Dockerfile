@@ -68,7 +68,9 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 
 # Version control
 RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
-RUN chown -R $DATASCI_USER:$DATASCI_USER /opt
+
+ENV IHaskell=/opt/IHaskell
+RUN cd /opt && git clone https://github.com/gibiansky/IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
 
 RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
 RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
@@ -109,13 +111,13 @@ RUN $CONDA_BIN/conda install --yes -c bioconda julia && \
 	julia -e 'using RDatasets' && \
 	julia -e 'using IJulia'
 
-ENV IHaskell=/opt/IHaskell
+
 
 # RUN $CONDA_BIN/conda install --yes -c bioconda ghc
 RUN stack setup
 RUN stack config set system-ghc --global true
 
-RUN cd /opt && git clone https://github.com/gibiansky/IHaskell
+
 RUN cd $IHaskell && stack install gtk2hs-buildtools
 
 RUN cd $IHaskell && stack install --fast
