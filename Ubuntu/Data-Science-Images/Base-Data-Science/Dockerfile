@@ -94,7 +94,8 @@ RUN conda install --yes -c asmeurer ghc
 RUN $CONDA_BIN/conda install --yes -c conda-forge cmake autoconf automake pango libtool gnuplot ghostscript graphviz pkg-config \
 lapack blas readline xorg-libx11 xorg-libxau xorg-libxdmcp fig2dev libjpeg-turbo pcre arpack curl fftw fontconfig freetype glpk hdf5 \
 llvmdev zlib suitesparse qscintilla2 qt libpng lua lua-luaposix lua-luafilesystem xorg-libxrender boost mesalib
-RUN conda install --yes -c clinicalgraphics osmesa vtk pyopengl zeromq
+# RUN conda install --yes -c conda-forge pyopengl
+RUN conda install --yes -c clinicalgraphics osmesa vtk zeromq
 RUN conda install --yes -c pkgw/label/superseded modern-xorg-stack
 RUN echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /opt/conda/etc/julia/juliarc.jl
 
