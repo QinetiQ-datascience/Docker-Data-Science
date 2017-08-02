@@ -17,3 +17,6 @@ ijsinstall
 
 $CONDA_BIN/pip install octave_kernel
 $CONDA_BIN/python -m octave_kernel.install
+
+
+$CONDA_BIN/jupyter kernelspec install $Cling/cling --user
