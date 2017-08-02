@@ -44,23 +44,21 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get --yes build-dep octave && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Version control
 RUN apt-get update && apt-get install --yes git subversion mercurial && apt-get clean all && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get --yes --no-install-recommends install texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-generic-recommended pandoc && \
 apt-get clean all && rm -rf /var/lib/apt/lists/*
 
-# RUN apt-get update && apt-get --yes build-dep octave && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/*
+ENV IHaskell=/opt/IHaskell
+RUN cd /opt && git clone https://github.com/gibiansky/IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
 
-# ENV SAGE_ROOT=/usr/lib/sagemath/ JUPYTER_SHARE=/usr/local/share/jupyter USER_JUPYTER_KERNELS=$HOME/.jupyter/kernels
-
-# # Install Sage math
-# RUN apt-add-repository -y ppa:aims/sagemath && apt-get update && apt-get --yes install sagemath-upstream-binary
-# RUN chown -R $DATASCI_USER:$DATASCI_USER $SAGE_ROOT && mkdir -p $HOME/.sage && chown -R $DATASCI_USER:$DATASCI_USER $HOME/.sage && chmod -R 775 $HOME/.sage && \
-# mkdir -p /usr/local/share/jupyter && chown -R $DATASCI_USER:$DATASCI_USER $JUPYTER_SHARE && chown -R $DATASCI_USER:$DATASCI_USER $JUPYTER_SHARE && \
-# mkdir -p $USER_JUPYTER_KERNELS && chown -R $DATASCI_USER:$DATASCI_USER $USER_JUPYTER_KERNELS
+ENV Cling=/opt/clingkernel
+RUN cd /opt && git clone --depth 1 https://github.com/minrk/clingkernel.git && chown -R $DATASCI_USER:$DATASCI_USER $Cling
 
 USER $DATASCI_USER
 ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
@@ -111,56 +109,28 @@ RUN julia -e 'Pkg.init()' && \
 	julia -e 'using IJulia'
 
 
+RUN conda install --yes -c conda-forge libglu protobuf xorg-xproto
 
 
-
-# # julia -e 'Pkg.init()' && \
-# # julia -e 'Pkg.update()' && \
-# # julia -e 'Pkg.add("HDF5")' && \
-# # julia -e 'Pkg.add("Gadfly")' && \
-# # julia -e 'Pkg.add("RDatasets")' && \
-# # julia -e 'Pkg.add("IJulia")' && \
-
-# # julia -e 'using HDF5' && \
-# # julia -e 'using Gadfly' && \
-# # julia -e 'using RDatasets' && \
-# # julia -e 'using IJulia'
-
-# USER root
-
-# ENV IHaskell=/opt/IHaskell
-# RUN cd /opt && git clone https://github.com/gibiansky/IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $IHaskell
-
-# # RUN cd $CONDA_SRC && git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout e2a30a && ./autogen.sh && ./configure && make check && make install && ldconfig
-# # RUN cd $CONDA_SRC && git clone --depth 1 git://github.com/zeromq/libzmq.git && cd libzmq && ./autogen.sh && ./configure && make -j 4
-# # RUN cd $CONDA_SRC/libzmq && make check && make install && ldconfig
-# # RUN rm -rf $CONDA_SRC/libsodium && rm -rf $CONDA_SRC/libzmq
-# ENV Cling=/opt/clingkernel
-# RUN cd /opt && git clone --depth 1 https://github.com/minrk/clingkernel.git && chown -R $DATASCI_USER:$DATASCI_USER $Cling
-# USER $DATASCI_USER
-
-
-
-
-
-
+# RUN cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
+# chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
+# rm -rf cling-build && rm cpt.py
 
 # # RUN stack setup
 # # RUN stack config set system-ghc --global true
 
+RUN cd $IHaskell && stack install gtk2hs-buildtools
 
-# # RUN cd $IHaskell && stack install gtk2hs-buildtools
-
-# # RUN cd $IHaskell && stack install --fast
-# # RUN cd $IHaskell && stack exec ihaskell -- install --stack 
+RUN cd $IHaskell && stack install --fast
+RUN cd $IHaskell && stack exec ihaskell -- install --stack 
 
 # # # Might be bad to blindly update all packages
 # # ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 # # RUN bash /tmp/update_conda_pip_pkgs.sh
 
 
-# ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-# RUN bash /tmp/install_jupyter_widgets.sh
+ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
+RUN bash /tmp/install_jupyter_widgets.sh
 
 # # USER root
 

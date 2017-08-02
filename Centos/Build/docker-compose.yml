@@ -1,0 +1,15 @@
+version: '2'
+services:
+  centos-base-data-science:
+    container_name: centos-base-data-science
+    build:
+      context: ../Data-Science-Images/Base-Data-Science/
+      dockerfile: Dockerfile
+    image: qinetiq/centos-base-data-science:latest
+    
+  # spark-data-science:
+  #   container_name: spark-data-science
+  #   build:
+  #     context: ../Data-Science-Images/Spark-Data-Science/
+  #     dockerfile: Dockerfile
+  #   image: qinetiq/spark-data-science:latest

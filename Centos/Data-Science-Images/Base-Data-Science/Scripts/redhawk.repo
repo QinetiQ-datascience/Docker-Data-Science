@@ -1,0 +1,5 @@
+[redhawk]
+name=REDHAWK Repository
+baseurl=file://LDIR/
+enabled=1
+gpgcheck=0
