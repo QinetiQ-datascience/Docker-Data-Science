@@ -25,5 +25,5 @@ $CONDA_BIN/conda update --yes setuptools
 $CONDA_BIN/pip install --upgrade pip
 $CONDA_BIN/conda install --yes icu=58 --channel conda-forge
 
-$CONDA_BIN/conda create --yes -n python2 python=2.7 anaconda
-source activate python2 && $CONDA_BIN/conda install --yes -c conda-forge && source deactivate python2
+# $CONDA_BIN/conda create --yes -n python2 python=2.7 anaconda
+# source activate python2 && $CONDA_BIN/conda install --yes -c conda-forge && source deactivate python2
