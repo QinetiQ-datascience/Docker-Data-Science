@@ -88,8 +88,6 @@ RUN $CONDA_BIN/conda install --yes -c jeremyschlatter golang
 
 RUN conda install --yes -c creditx gcc-7
 RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk sbt graphicsmagick perl-gd scala
-RUN conda install --yes -c asmeurer ghc 
-# RUN $CONDA_BIN/conda install --yes -c salford_systems gcc-6 
 
 RUN $CONDA_BIN/conda install --yes -c conda-forge cmake autoconf automake pango libtool gnuplot ghostscript graphviz pkg-config \
 lapack blas readline xorg-libx11 xorg-libxau xorg-libxdmcp fig2dev libjpeg-turbo pcre arpack curl fftw fontconfig freetype glpk hdf5 \
@@ -98,7 +96,13 @@ llvmdev zlib suitesparse qscintilla2 qt libpng lua lua-luaposix lua-luafilesyste
 RUN conda install --yes -c clinicalgraphics osmesa vtk zeromq
 RUN conda install --yes -c pkgw/label/superseded modern-xorg-stack
 RUN echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /opt/conda/etc/julia/juliarc.jl
-
+USER root 
+RUN apt-get update && apt-get install -yq libmagick++-dev libblosc-dev libmagic-dev libcairo2 libcairo2-dev wget curl unzip zip bzip2 fonts-liberation python-dev libjpeg8-dev zlib1g-dev gfortran  fonts-dejavu ca-certificates \
+libcairo2 libpango1.0-0 libpcre3-dev gettext hdf5-tools m4 libssl-dev libcurl4-openssl-dev libzmq3-dev cmake unzip libsm6 jed emacs libxrender1 \
+libtinfo-dev libcairo2-dev libpango1.0-dev libmagic-dev libblas-dev liblapack-dev libzmq3-dev libgmp-dev libffi-dev libunwind-dev \
+ghostscript gnuplot graphviz less xvfb net-tools
+USER $DATASCI_USER
+# RUN $CONDA_BIN/conda install --yes -c conda-forge libmagic cairo
 RUN julia -e 'Pkg.init()' && \
 	julia -e 'Pkg.update()' && \
 	julia -e 'Pkg.add("HDF5")' && \
@@ -118,10 +122,14 @@ RUN conda install --yes -c conda-forge libglu protobuf xorg-xproto
 # chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
 # rm -rf cling-build && rm cpt.py
 
-# # RUN stack setup
-# # RUN stack config set system-ghc --global true
+RUN stack setup
+RUN stack config set system-ghc --global true
 
 RUN cd $IHaskell && stack install gtk2hs-buildtools
+
+USER root
+RUN apt-get update && apt-get install -yq libicu-dev libghc-cairo-dev glib2.0-dev
+USER $DATASCI_USER
 
 RUN cd $IHaskell && stack install --fast
 RUN cd $IHaskell && stack exec ihaskell -- install --stack 

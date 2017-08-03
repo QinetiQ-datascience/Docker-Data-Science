@@ -90,8 +90,6 @@ RUN $CONDA_BIN/conda install --yes -c jeremyschlatter golang
 
 RUN conda install --yes -c creditx gcc-7
 RUN $CONDA_BIN/conda install --yes -c bioconda java-jdk sbt graphicsmagick perl-gd scala
-RUN conda install --yes -c asmeurer ghc 
-# RUN $CONDA_BIN/conda install --yes -c salford_systems gcc-6 
 
 RUN $CONDA_BIN/conda install --yes -c conda-forge cmake autoconf automake pango libtool gnuplot ghostscript graphviz pkg-config \
 lapack blas readline xorg-libx11 xorg-libxau xorg-libxdmcp fig2dev libjpeg-turbo pcre arpack curl fftw fontconfig freetype glpk hdf5 \
@@ -101,56 +99,62 @@ RUN conda install --yes -c clinicalgraphics osmesa vtk zeromq
 RUN conda install --yes -c pkgw/label/superseded modern-xorg-stack
 RUN echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /opt/conda/etc/julia/juliarc.jl
 
-RUN julia -e 'Pkg.init()' && \
-    julia -e 'Pkg.update()' && \
-    julia -e 'Pkg.add("HDF5")' && \
-    julia -e 'Pkg.add("Gadfly")' && \
-    julia -e 'Pkg.add("RDatasets")' && \
-    julia -e 'Pkg.add("IJulia")' && \
-    julia -e 'using HDF5' && \
-    julia -e 'using Gadfly' && \
-    julia -e 'using RDatasets' && \
-    julia -e 'using IJulia'
+USER root 
+RUN yum update -y && yum install -y deltarpm
+ADD Scripts/dnf-stack-el7.repo /etc/yum.repos.d/dnf-stack-el7.repo
+RUN yum update -y && yum install -y dnf
+RUN dnf -y update && dnf install -y dnf-plugins-core copr-cli
+RUN dnf -y update && dnf copr enable nalimilan/julia -y
+RUN yum -y update && yum install -y ImageMagick ImageMagick-devel ImageMagick-c++ hdf5-devel blosc-devel
+
+USER $DATASCI_USER
+# RUN julia -e 'Pkg.init()' && \
+#     julia -e 'Pkg.update()' && \
+#     julia -e 'Pkg.add("HDF5")' && \
+#     julia -e 'Pkg.add("Gadfly")' && \
+#     julia -e 'Pkg.add("RDatasets")' && \
+#     julia -e 'Pkg.add("IJulia")' && \
+#     julia -e 'using HDF5' && \
+#     julia -e 'using Gadfly' && \
+#     julia -e 'using RDatasets' && \
+#     julia -e 'using IJulia'
 
 
-RUN conda install --yes -c conda-forge libglu protobuf xorg-xproto
+# RUN conda install --yes -c conda-forge libglu protobuf xorg-xproto
 
-RUN conda create --yes -n python2 python=2.7 anaconda
-RUN source activate python2 && conda install --yes -c conda-forge && source deactivate python2
+# RUN stack setup
+# RUN stack config set system-ghc --global true
 
-# # RUN stack setup
-# # RUN stack config set system-ghc --global true
+# RUN cd $IHaskell && stack install gtk2hs-buildtools
 
-RUN cd $IHaskell && stack install gtk2hs-buildtools
+# RUN cd $IHaskell && stack install --fast
+# RUN cd $IHaskell && stack exec ihaskell -- install --stack 
 
-RUN cd $IHaskell && stack install --fast
-RUN cd $IHaskell && stack exec ihaskell -- install --stack 
-
-# # # Might be bad to blindly update all packages
-# # ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-# # RUN bash /tmp/update_conda_pip_pkgs.sh
+# # # # Might be bad to blindly update all packages
+# # # ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
+# # # RUN bash /tmp/update_conda_pip_pkgs.sh
 
 
-ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-RUN bash /tmp/install_jupyter_widgets.sh
+# ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
+# RUN bash /tmp/install_jupyter_widgets.sh
 
 USER root
 
-RUN cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
-chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
-rm -rf cling-build && rm cpt.py
+# RUN cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
+# chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
+# rm -rf cling-build && rm cpt.py
 
-#Redhawk
-ENV REDHAWK_VERSION=2.0.6
-RUN cd $CONDA_SRC && wget https://github.com/RedhawkSDR/redhawk/releases/download/$REDHAWK_VERSION/redhawk-yum-$REDHAWK_VERSION-el7-x86_64.tar.gz && \
-tar xzvf redhawk-yum-$REDHAWK_VERSION-el7-x86_64.tar.gz && cd redhawk-$REDHAWK_VERSION-el7-x86_64 
+# #Redhawk
+# ENV REDHAWK_VERSION=2.0.6
+# RUN cd $CONDA_SRC && wget https://github.com/RedhawkSDR/redhawk/releases/download/$REDHAWK_VERSION/redhawk-yum-$REDHAWK_VERSION-el7-x86_64.tar.gz && \
+# tar xzvf redhawk-yum-$REDHAWK_VERSION-el7-x86_64.tar.gz && cd redhawk-$REDHAWK_VERSION-el7-x86_64 
 
-ADD Scripts/redhawk.repo /etc/yum.repos.d/redhawk.repo
-RUN cd $CONDA_SRC/redhawk-$REDHAWK_VERSION-el7-x86_64 && sed -i 's@LDIR@'`pwd`'@g' /etc/yum.repos.d/redhawk.repo
-RUN yum -y update && yum groupinstall -y "REDHAWK Development"
+# ADD Scripts/redhawk.repo /etc/yum.repos.d/redhawk.repo
+# RUN cd $CONDA_SRC/redhawk-$REDHAWK_VERSION-el7-x86_64 && sed -i 's@LDIR@'`pwd`'@g' /etc/yum.repos.d/redhawk.repo
+# RUN yum -y update && yum groupinstall -y "REDHAWK Development"
 
 # ~~~~ CLEAN UP ~~~~
-RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-get clean && \
+RUN yum -y update && yum -y upgrade && yum -y autoremove && yum clean all && \
     rm -rf /var/lib/apt-get/lists/* && \
     rm -rf /src/*.deb && \
     rm -rf $CONDA_SRC/* && \
@@ -178,3 +182,4 @@ CMD ["/bin/bash"]
 
 
 
+# conda install -c conda-forge libblitz
