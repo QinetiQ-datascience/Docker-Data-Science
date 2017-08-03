@@ -48,6 +48,7 @@ RUN yum -y update && yum install -y \
 RUN yum -y update && yum-builddep -y octave && \
     yum clean all && \
     rm -rf /var/lib/apt/lists/*
+
 # Version control
 RUN yum -y update && yum install -y git subversion mercurial && yum clean all && rm -rf /var/lib/apt/lists/*
 
@@ -66,8 +67,8 @@ ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64
 ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
 
-RUN $CONDA_BIN/conda create --yes -n python2 python=2.7 anaconda
-RUN source activate python2 && $CONDA_BIN/conda install --yes -c conda-forge && source deactivate python2
+RUN $CONDA_BIN/conda create --yes -n python2 python=2.7 
+RUN source activate python2 && $CONDA_BIN/conda install --yes -c conda-forge sagelib && source deactivate python2
 RUN conda install --yes -c pstey julia julia-bindeps
 # Languages
 RUN $CONDA_BIN/conda install --yes -c conda-forge \
