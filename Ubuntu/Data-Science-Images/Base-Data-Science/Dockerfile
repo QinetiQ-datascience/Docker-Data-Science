@@ -128,7 +128,19 @@ RUN stack config set system-ghc --global true
 RUN cd $IHaskell && stack install gtk2hs-buildtools
 
 USER root
-RUN apt-get update && apt-get install -yq libicu-dev libghc-cairo-dev glib2.0-dev
+RUN apt-get update && apt-get install -yq libicu-dev libghc-cairo-dev glib2.0 glib2.0-dev build-essential
+
+RUN apt-get update && sudo apt-get install --yes \
+libblas-dev \
+liblapack-dev \
+libatlas-base-dev \
+libxss1 \
+libgconf-2-4 \
+libnss3 \
+libasound2 \
+libgl1-mesa-dri \
+libgl1-mesa-glx && \
+apt-get clean all && rm -rf /var/lib/apt/lists/*
 USER $DATASCI_USER
 
 RUN cd $IHaskell && stack install --fast
