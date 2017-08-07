@@ -26,21 +26,31 @@ ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64 GHC_VERSION=8.2.1
 
 ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
-# conda install --yes jupyter_dashboards -c conda-forge
-# jupyter kernelspec install $Cling/cling --user
+RUN pip install bash_kernel && python -m bash_kernel.install --user
+USER root
+RUN npm install -g ijavascript
+USER $DATASCI_USER
+RUN ijsinstall
+
+RUN pip install octave_kernel && python -m octave_kernel.install --user
+RUN conda install --yes jupyter_dashboards -c conda-forge
+ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
 
 # RUN cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
 # chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
 # rm -rf cling-build && rm cpt.py
+# RUN jupyter kernelspec install $Cling/cling --user
+
+
 
 # Might be bad to blindly update all packages
 ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
 RUN bash /tmp/update_conda_pip_pkgs.sh
 
-ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-RUN bash /tmp/install_jupyter_widgets.sh
+# ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
+# RUN bash /tmp/install_jupyter_widgets.sh
 
-RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
+# RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
 
 USER root 
 
