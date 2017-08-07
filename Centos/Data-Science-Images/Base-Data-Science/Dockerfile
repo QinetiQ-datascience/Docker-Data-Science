@@ -13,6 +13,11 @@ MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 ENV DEBIAN_FRONTEND=noninteractive SHELL=/bin/bash NAME=centos-base-data-science
 RUN yum update -y &&  yum install -y epel-release && yum clean all && rm -rf /var/lib/apt/lists/*
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && yum clean all && rm -rf /var/lib/apt/lists/*
+RUN yum update -y && yum install -y deltarpm
+ADD Scripts/dnf-stack-el7.repo /etc/yum.repos.d/dnf-stack-el7.repo
+RUN yum update -y && yum install -y dnf
+RUN dnf -y update && dnf install -y dnf-plugins-core copr-cli
+RUN dnf -y update && dnf copr enable nalimilan/julia -y
 # The Basics
 RUN	yum -y update && yum -y upgrade && yum -y install yum-utils sudo locales && \
 yum clean all && rm -rf /var/lib/apt/lists/*
@@ -98,14 +103,6 @@ llvmdev zlib suitesparse qscintilla2 qt libpng lua lua-luaposix lua-luafilesyste
 RUN conda install --yes -c clinicalgraphics osmesa vtk zeromq
 RUN conda install --yes -c pkgw/label/superseded modern-xorg-stack
 RUN echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /opt/conda/etc/julia/juliarc.jl
-
-USER root 
-RUN yum update -y && yum install -y deltarpm
-ADD Scripts/dnf-stack-el7.repo /etc/yum.repos.d/dnf-stack-el7.repo
-RUN yum update -y && yum install -y dnf
-RUN dnf -y update && dnf install -y dnf-plugins-core copr-cli
-RUN dnf -y update && dnf copr enable nalimilan/julia -y
-RUN yum -y update && yum install -y ImageMagick ImageMagick-devel ImageMagick-c++ hdf5-devel blosc-devel
 
 USER $DATASCI_USER
 # RUN julia -e 'Pkg.init()' && \
