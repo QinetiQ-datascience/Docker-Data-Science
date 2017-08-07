@@ -30,17 +30,7 @@ apt-get update && apt-get --yes install texlive texlive-latex-base texlive-latex
 apt-get clean all && rm -rf /var/lib/apt/lists/*
 
 # Install Boost
-apt-get update && add-apt-repository universe && apt-get update && apt-get --yes install  libboost-all-dev && \
+apt-get update && add-apt-repository universe && apt-get update && apt-get --yes install   && \
 apt-get clean all && rm -rf /var/lib/apt/lists/*
 
-# TODO Fix Checksum
 
-mkdir -p $TINI_DIR
-cd $TINI_DIR
-wget --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini
-wget --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc
-gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $TINI_CHECKSUM
-gpg --verify $TINI_DIR/tini.asc
-chmod +x $TINI_DIR/tini
-chown -R $DATASCI_USER:$DATASCI_USER $TINI_DIR
-cp $TINI_DIR/tini /usr/bin/tini
