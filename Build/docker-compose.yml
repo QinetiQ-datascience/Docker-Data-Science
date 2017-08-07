@@ -1,0 +1,15 @@
+version: '2'
+services:
+  ubuntu-base-data-science:
+    container_name: ubuntu-base-data-science
+    build:
+      context: ../
+      dockerfile: Ubuntu-Base-Data-Science.Dockerfile
+    image: qinetiq/ubuntu-base-data-science:latest
+    
+  # spark-data-science:
+  #   container_name: spark-data-science
+  #   build:
+  #     context: ../Data-Science-Images/Spark-Data-Science/
+  #     dockerfile: Dockerfile
+  #   image: qinetiq/spark-data-science:latest
