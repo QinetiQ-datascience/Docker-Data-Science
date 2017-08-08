@@ -9,6 +9,7 @@ ENV CONDA_DIR=/opt/conda CONDA_SRC=/usr/local/src/conda
 ENV PATH $CONDA_DIR/bin:$HOME/.local/bin:$PATH
 ENV IHaskell=/opt/IHaskell Cling=/opt/clingkernel
 ENV Documents=$HOME/Documents Downloads=$HOME/Downloads Workspace=$HOME/Workspace
+ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
 
 # SHA Currently failing
 ENV TINI_VERSION=v0.15.0 TINI_CHECKSUM=595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 TINI_DIR=/opt/tini GOLANG_VERSION=1.8.3
@@ -21,35 +22,10 @@ VOLUME ["$Documents", "$Downloads", "$Workspace"]
 
 USER $DATASCI_USER
 
-ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64 GHC_VERSION=8.2.1
+ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64 GHC_VERSION=8.2.1 SAGEMATH=/opt/conda/envs/sagemath
 
 ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
-
-RUN pip install bash_kernel && python -m bash_kernel.install --user
-
-RUN npm install -g ijavascript
-RUN ijsinstall
-
-RUN pip install octave_kernel && python -m octave_kernel.install --user
-RUN conda install --yes jupyter_dashboards -c conda-forge
-ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
-RUN cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
-chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
-rm -rf cling-build && rm cpt.py
-
-RUN jupyter kernelspec install $Cling/cling --user
-
-
-
-# Might be bad to blindly update all packages
-ADD Scripts/Conda/update_conda_pip_pkgs.sh /tmp/update_conda_pip_pkgs.sh
-RUN bash /tmp/update_conda_pip_pkgs.sh
-
-# ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/install_jupyter_widgets.sh
-# RUN bash /tmp/install_jupyter_widgets.sh
-
-# RUN mv $HOME/.local/share/jupyter/kernels/* $CONDA_DIR/share/jupyter/kernels/
 
 USER root 
 

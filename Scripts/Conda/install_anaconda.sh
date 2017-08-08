@@ -29,10 +29,14 @@ julia -e 'Pkg.update()' && \
 julia -e 'Pkg.add("HDF5")' && \
 julia -e 'Pkg.add("Gadfly")' && \
 julia -e 'Pkg.add("RDatasets")' && \
+julia -e 'Pkg.add("Plots")' &&  \
+julia -e 'Pkg.add("PyPlot")' &&  \
 julia -e 'Pkg.add("IJulia")' && \
 julia -e 'using HDF5' && \
 julia -e 'using Gadfly' && \
 julia -e 'using RDatasets' && \
+julia -e 'using Plots' && \
+julia -e 'using PyPlot' && \
 julia -e 'using IJulia'
 
 # Languages
@@ -62,12 +66,30 @@ stack upgrade && stack update && stack --resolver ghc-$GHC_VERSION setup --upgra
 stack config set system-ghc --global true && \
 cd $IHaskell && stack install gtk2hs-buildtools --install-ghc 
 
+echo $DATASCI_USER | sudo -S chown -R $DATASCI_USER:$DATASCI_USER $CONDA_DIR
 
+pip install bash_kernel && python -m bash_kernel.install --user
+
+npm install -g ijavascript
+ijsinstall
+
+pip install octave_kernel && python -m octave_kernel.install --user
+
+$SAGEMATH/bin/python -m pip install ipykernel && $SAGEMATH//bin/python -m ipykernel install --user --name sagemath --display-name "Python 2 (sagemath)"
+
+# Might be bad to blindly update all packages
+conda update --all --yes
+pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
 
 # conda install --yes mathjax
 conda install --yes --channel damianavila82 rise
-
 # Configure kernels
 jupyter-nbextension install rise --py --sys-prefix
 jupyter-nbextension enable rise --py --sys-prefix
 jupyter-nbextension enable widgetsnbextension --py --sys-prefix
+conda install --yes jupyter_dashboards -c conda-forge
+
+# cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
+# chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \
+# rm -rf cling-build && rm cpt.py
+# jupyter kernelspec install $Cling/cling --user
