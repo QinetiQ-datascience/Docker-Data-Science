@@ -10,5 +10,8 @@ docker run --rm \
     -v $HOME/Documents:${HOME_DIR}/Documents \
     -v $HOME/Downloads:${HOME_DIR}/Downloads \
     -w $HOME_DIR \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY=unix$DISPLAY \
+    -e ${HOME} \
     -p 8888-9000:8888-9000 \
     qinetiq/ubuntu-base-data-science:latest

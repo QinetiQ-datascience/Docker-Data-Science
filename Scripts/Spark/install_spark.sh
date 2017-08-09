@@ -19,3 +19,5 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF && \
     apt-get --no-install-recommends --yes --allow-downgrades --allow-remove-essential --allow-change-held-packages install mesos=1.2\* && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+    # https://s3.eu-central-1.amazonaws.com/spark-notebook/tgz/spark-notebook-0.7.0-pre2-scala-2.11.7-spark-1.6.2-hadoop-2.7.3-with-hive-with-parquet.tgz

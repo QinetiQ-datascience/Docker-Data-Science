@@ -17,7 +17,7 @@ conda update --yes setuptools
 pip install --upgrade pip
 conda install --yes icu=58 --channel conda-forge
 
-conda create --yes -n sagemath python=2.7 
+conda create --yes -n sagemath python=2.7 anaconda
 bash -c "source activate sagemath && conda install --yes -c conda-forge sagelib && source deactivate sagemath"
 
 conda install --yes -c pstey julia julia-bindeps julia-uriparser julia-compat julia-blosc julia-sha
@@ -52,8 +52,9 @@ conda install --yes -c conda-forge \
 	r-codetools \
 	r-cvtools \
 	r-udunits2 \
-	r-rstudioapi
-
+	r-rstudioapi \
+	rpy2 \
+	rstudio
 
 conda install --yes -c creditx gcc-7
 conda install --yes -c bioconda sbt scala
@@ -87,7 +88,8 @@ conda install --yes --channel damianavila82 rise
 jupyter-nbextension install rise --py --sys-prefix
 jupyter-nbextension enable rise --py --sys-prefix
 jupyter-nbextension enable widgetsnbextension --py --sys-prefix
-conda install --yes jupyter_dashboards -c conda-forge
+pip install jupyter_dashboards
+jupyter dashboards quick-setup --sys-prefix
 
 # cd $CONDA_SRC && wget https://raw.githubusercontent.com/root-project/cling/master/tools/packaging/cpt.py && \
 # chmod +x cpt.py && ./cpt.py --check-requirements && ./cpt.py --create-dev-env Debug --with-workdir=./cling-build/ && \

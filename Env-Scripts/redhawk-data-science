@@ -9,6 +9,7 @@ docker run --rm \
     -i -t \
     -v $HOME/Documents:${HOME_DIR}/Documents \
     -v $HOME/Downloads:${HOME_DIR}/Downloads \
+    -v $HOME/Workspace:${HOME_DIR}/Workspace \
     -w $HOME_DIR \
     -p 8888-9000:8888-9000 \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
