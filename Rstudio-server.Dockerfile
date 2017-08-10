@@ -27,9 +27,4 @@ RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-g
     rm -rf $CONDA_SRC/* && \
     rm -rf /tmp/*
 
-RUN echo "$DATASCI_USER:$DATASCI_USER" | chpasswd
-
-USER $DATASCI_USER
-
-
 CMD ["/usr/lib/rstudio-server/bin/rserver", "--server-daemonize=0", "--server-app-armor-enabled=0"]
