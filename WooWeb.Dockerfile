@@ -1,5 +1,5 @@
 
-FROM joshcole/base-data-science-cpu:latest
+FROM qinetiq/ubuntu-base-data-science:latest
 
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
 

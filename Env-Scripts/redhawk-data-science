@@ -16,5 +16,12 @@ docker run --rm \
     -e DISPLAY=unix${DISPLAY} \
     --device /dev/snd \
     -v /dev/shm:/dev/shm \
-    qinetiq/redhawk-data-science:latest
+    --device /dev/dri \
+    --security-opt seccomp:unconfined \
+    --cap-add=SYS_ADMIN \
+    -e "container=docker" \
+    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+    --privileged=true -d \
+    --name docker-redhawk \
+    qinetiq/redhawk-data-science:latest /usr/sbin/init
     

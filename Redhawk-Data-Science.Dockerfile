@@ -48,7 +48,7 @@ EXPOSE 8787 8888-9000
 
 
 # Generate machine id
-RUN dbus-uuidgen > /etc/machine-id
+RUN /usr/bin/dbus-uuidgen > /etc/machine-id
 RUN mkdir -p /etc/selinux/targeted/contexts/
 RUN echo '<busconfig><selinux></selinux></busconfig>' > /etc/selinux/targeted/contexts/dbus_contexts
 USER $DATASCI_USER

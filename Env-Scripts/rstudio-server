@@ -16,5 +16,5 @@ docker run --rm \
     -p 8888-9000:8888-9000 \
     -p 8787:8787 \
     --device /dev/dri \
-    --name ubuntu-base-data-science \
-    qinetiq/ubuntu-base-data-science:latest
+    --name rstudio-server \
+    rstudio-server

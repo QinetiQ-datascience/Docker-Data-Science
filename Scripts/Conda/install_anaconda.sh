@@ -43,6 +43,7 @@ julia -e 'using IJulia'
 conda install --yes -c conda-forge \
 	nodejs \
 	octave \
+	stack \
 	perl \
 	ruby \
 	r-essentials \
@@ -81,6 +82,11 @@ $SAGEMATH/bin/python -m pip install ipykernel && $SAGEMATH//bin/python -m ipyker
 # Might be bad to blindly update all packages
 conda update --all --yes
 pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
+
+stack upgrade && stack update && stack --resolver ghc-$GHC_VERSION setup --upgrade-cabal --install-ghc && \
+stack config set system-ghc --global true && \
+cd $IHaskell && stack install gtk2hs-buildtools --install-ghc 
+cd $IHaskell && stack --install-ghc install ihaskell && ihaskell install
 
 # conda install --yes mathjax
 conda install --yes --channel damianavila82 rise

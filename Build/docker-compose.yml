@@ -6,6 +6,20 @@ services:
       context: ../
       dockerfile: Ubuntu-Base-Data-Science.Dockerfile
     image: qinetiq/ubuntu-base-data-science:latest
+
+  centos-base-data-science:
+    container_name: centos-base-data-science
+    build:
+      context: ../
+      dockerfile: Centos-Base-Data-Science.Dockerfile
+    image: qinetiq/centos-base-data-science:latest
+
+  redhawk-data-science:
+    container_name: redhawk-data-science
+    build:
+      context: ../
+      dockerfile: Redhawk-Data-Science.Dockerfile
+    image: qinetiq/redhawk-data-science:latest
     
   # spark-data-science:
   #   container_name: spark-data-science

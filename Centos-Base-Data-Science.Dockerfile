@@ -31,6 +31,8 @@ RUN bash /tmp/install_anaconda.sh
 
 USER root 
 
+RUN chown -R $DATASCI_USER:redhawk $HOME
+
 # ~~~~ CLEAN UP ~~~~
 RUN yum update -y && yum upgrade -y && yum autoremove -y && yum clean all && \
 	rm -rf /var/lib/apt-get/lists/* && \
@@ -41,12 +43,18 @@ RUN yum update -y && yum upgrade -y && yum autoremove -y && yum clean all && \
 COPY Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 
-# Expose Port For Jupyter
-EXPOSE 8888-9000
+# Expose Port For Rstudio and Jupyter
+EXPOSE 8787 8888-9000
 
+
+# Generate machine id
+RUN /usr/bin/dbus-uuidgen > /etc/machine-id
+RUN mkdir -p /etc/selinux/targeted/contexts/
+RUN echo '<busconfig><selinux></selinux></busconfig>' > /etc/selinux/targeted/contexts/dbus_contexts
 USER $DATASCI_USER
 
 RUN rm -rf $HOME/.cache/pip/* && conda clean -i -l -t --yes
+# RUN pip install virtualenv virtualenvwrapper
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/bin/bash"]
