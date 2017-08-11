@@ -15,6 +15,7 @@ docker run --rm \
     -e ${HOME} \
     -p 8888-9000:8888-9000 \
     -p 8787:8787 \
+    -p 8000:8000 \
     --device /dev/dri \
     --name ubuntu-base-data-science \
     qinetiq/ubuntu-base-data-science:latest
