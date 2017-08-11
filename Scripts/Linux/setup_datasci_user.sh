@@ -106,7 +106,7 @@ elif [ "${os_environment}" == "Centos" ]; then
     ca-certificates \
     fonts-liberation \
     file-devel ghc-cairo-devel cairo-devel glib2-devel \
-    libicu-devel zeromq-devel pango-devel blas-devel \
+    libicu-devel zeromq-devel pango-devel blas-devel blosc-devel\
     lapack-devel texlive ttexlive-latex texlive-xetex texlive-collection-latex \
     texlive-collection-latexrecommended texlive-xetex-def texlive-collection-xetex pandoc ghc-pandoc-devel \
     boost-devel \

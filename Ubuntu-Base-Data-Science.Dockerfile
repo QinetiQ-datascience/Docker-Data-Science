@@ -27,6 +27,14 @@ ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64 GHC_VERSION=8.2.1 SAGEMATH=/op
 
 ADD Scripts/Conda/install_anaconda.sh /tmp/install_anaconda.sh
 RUN bash /tmp/install_anaconda.sh
+RUN cd $CONDA_SRC &&  git clone --depth 1 https://github.com/jupyter-scala/jupyter-scala.git && \
+cd jupyter-scala && bash ./jupyter-scala && rm -rf $CONDA_SRC/jupyter-scala
+RUN cd $CONDA_SRC && git clone https://github.com/zeromq/czmq && cd czmq && ./autogen.sh && ./configure && sudo make && sudo make install
+RUN gem install cztop iruby && iruby register --force
+RUN conda install --yes -c bioconda perl-app-cpanminus
+RUN cpanm --notest IO::Async::Loop Devel::IPerl PDL Moose MooseX::AbstractFactory MooseX::AbstractMethod MooseX::Storage Test::More
+# RUN iperl kernel
+# RUN cd $CONDA_SRC/p5-Devel-IPerl && ./bin/iperl console && ./bin/iperl notebook
 
 USER root 
 
@@ -40,8 +48,8 @@ RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-g
 COPY Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 RUN chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 
-# Expose Port For Rstudio and Jupyter
-EXPOSE 8787 8888-9000
+# Expose Port For JupyterHub, Rstudio and Jupyter
+EXPOSE 8000 8787 8888-9000
 
 
 USER $DATASCI_USER

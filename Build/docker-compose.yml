@@ -20,6 +20,13 @@ services:
       context: ../
       dockerfile: Redhawk-Data-Science.Dockerfile
     image: qinetiq/redhawk-data-science:latest
+
+  rstudio-server:
+    container_name: rstudio-server
+    build:
+      context: ../
+      dockerfile: Rstudio-server.Dockerfile
+    image: qinetiq/rstudio-server:latest
     
   # spark-data-science:
   #   container_name: spark-data-science
