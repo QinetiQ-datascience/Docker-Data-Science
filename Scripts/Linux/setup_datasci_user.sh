@@ -64,7 +64,7 @@ if [ "${os_environment}" == "Ubuntu" ]; then
     liblapack-dev texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra \
     texlive-fonts-recommended texlive-generic-recommended pandoc libghc-pandoc-dev \
     libboost-all-dev \
-    git subversion mercurial 
+    git subversion mercurial \
     fcitx-frontend-qt5 fcitx-modules fcitx-module-dbus \
     libedit2 libgl1-mesa-dri libgl1-mesa-glx \
     libgstreamer0.10-0 libgstreamer-plugins-base0.10-0 \
