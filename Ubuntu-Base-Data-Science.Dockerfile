@@ -84,9 +84,14 @@ RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-g
 EXPOSE 8000 8787 8888-9001
 
 RUN rm /tmp/* -rf
+RUN cd /opt/ && wget https://download-cf.jetbrains.com/python/pycharm-community-2017.2.1.tar.gz && tar -xzf pycharm-community-2017.2.1.tar.gz
+RUN rm /opt/pycharm-community-2017.2.1.tar.gz
+RUN chown -R $DATASCI_USER:$DATASCI_USER /opt/pycharm-community-2017.2.1
+
 USER $DATASCI_USER
 
 RUN rm -rf $HOME/.cache/pip/* && conda clean -i -l -t --yes
+
 
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
