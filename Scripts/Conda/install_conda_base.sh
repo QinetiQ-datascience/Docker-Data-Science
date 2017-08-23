@@ -20,7 +20,6 @@ shapely \
 rtree \
 pyproj \
 pyshp \
-qgis \
 gdal
 
 conda clean -tipsy
