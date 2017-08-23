@@ -14,11 +14,10 @@ ENV NODE $CONDA_DIR/bin/node
 # SHA Currently failing
 ENV TINI_VERSION=v0.15.0 TINI_CHECKSUM=595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 TINI_DIR=/opt/tini GOLANG_VERSION=1.8.3
 ENV JDK_VERSION=8u144
+ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
 
 ADD Scripts/Linux/setup_datasci_user.sh /tmp/setup_datasci_user.sh
 RUN bash /tmp/setup_datasci_user.sh
-
-ENV LANG=en_GB.UTF-8 LANGUAGE=en_GB:en  LC_ALL=en_GB.UTF-8
 
 VOLUME ["$Documents", "$Downloads", "$Workspace"]
 
