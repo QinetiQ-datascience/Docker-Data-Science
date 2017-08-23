@@ -21,7 +21,7 @@ docker run --rm \
     --cap-add=SYS_ADMIN \
     -e "container=docker" \
     -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-    --privileged=true -d \
+    --privileged=true \
     --name docker-redhawk \
-    qinetiq/redhawk-data-science:latest /usr/sbin/init
+    qinetiq/redhawk-data-science:latest
     

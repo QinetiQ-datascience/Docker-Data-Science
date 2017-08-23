@@ -138,8 +138,8 @@ fi
 ln -s /opt/Rodeo/rodeo /usr/bin/
 chown -R $DATASCI_USER:$DATASCI_USER /opt/Rodeo
 
-cd /opt && git clone https://github.com/gibiansky/IHaskell && git clone --depth 1 https://github.com/minrk/clingkernel.git \
-&& chown -R $DATASCI_USER:$DATASCI_USER $IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $Cling
+cd /opt && git clone https://github.com/gibiansky/IHaskell && git clone --depth 1 https://github.com/minrk/clingkernel.git  && mkdir -p $JULIA_PKGDIR && \
+chown -R $DATASCI_USER:$DATASCI_USER $IHaskell && chown -R $DATASCI_USER:$DATASCI_USER $Cling && chown -R $DATASCI_USER:$DATASCI_USER $JULIA_PKGDIR
 
 cd /tmp && wget https://storage.googleapis.com/golang/go$GOLANG_VERSION.linux-amd64.tar.gz && tar -C /usr/local -xzf go$GOLANG_VERSION.linux-amd64.tar.gz
 # TODO Fix Checksum
