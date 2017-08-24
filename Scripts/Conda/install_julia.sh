@@ -1,3 +1,8 @@
+#!/bin/bash
+set -e
+
+sudo mkdir -p $JULIA_PKGDIR && sudo chown -R $DATASCI_USER:$DATASCI_USER $JULIA_PKGDIR
+
 # Julia
 conda install --yes -c conda-forge julia
 

@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 conda install --yes -c conda-forge \
 	r-essentials \
 	r-xgboost \
