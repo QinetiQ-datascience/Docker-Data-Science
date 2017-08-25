@@ -7,7 +7,7 @@ bash /tmp/anaconda.sh -f -b -p $CONDA_DIR && rm /tmp/anaconda.sh
 conda config --system --add channels conda-forge && \
 conda config --system --set auto_update_conda true
 conda update --quiet --yes anaconda conda setuptools pip
-conda install --yes -c conda-forge icu=58 cmake autoconf automake boost pkg-config libtool zeromq libsodium cairo gettext pcre libuuid 
+
 conda install --yes -c conda-forge \
 ipyleaflet \
 bqplot \

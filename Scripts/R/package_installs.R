@@ -37,5 +37,6 @@ devtools::install_github("muschellij2/extrantsr")
 devtools::install_github('apache/spark@v1.4.0', subdir='R/pkg')
 
 install.packages("h2o", type="source", repos=(c("http://h2o-release.s3.amazonaws.com/h2o/latest_stable_R"))) # install the latest stable version of h2o
+install.packages("rmarkdown")
       
 

@@ -38,6 +38,7 @@ RUN bash /tmp/install_libs_from_src.sh
 
 # ADD Scripts/Conda/install_sagemath.sh /tmp/
 # RUN bash /tmp/install_sagemath.sh
+RUN conda install --yes -c conda-forge cmake autoconf automake pkg-config
 
 ADD Scripts/Conda/install_julia.sh /tmp/
 RUN bash /tmp/install_julia.sh
@@ -47,24 +48,60 @@ RUN bash /tmp/install_nodejs.sh
 
 ADD Scripts/Conda/install_octave.sh /tmp/
 RUN bash /tmp/install_octave.sh
+USER root 
+RUN add-apt-repository ppa:jonathonf/gcc-7.1
+RUN  apt-get update && apt-get install --yes gcc-7 g++-7
 
+ARG boost_version=1.65.0
+ARG boost_dir=boost_1_65_0
+ENV boost_version ${boost_version}
+
+RUN wget https://dl.bintray.com/boostorg/release/${boost_version}/source/${boost_dir}.tar.gz \
+    && tar xfz ${boost_dir}.tar.gz \
+    && rm ${boost_dir}.tar.gz \
+    && cd ${boost_dir} \
+    && ./bootstrap.sh \
+    && ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install \
+    && cd .. && rm -rf ${boost_dir} && ldconfig
+USER $DATASCI_USER
+
+ADD Scripts/R/* /tmp/
 ADD Scripts/Conda/install_r.sh /tmp/
 RUN bash /tmp/install_r.sh
+RUN Rscript /tmp/R/package_installs.R
+RUN Rscript /tmp/R/bioconductor_installs.R
+RUN Rscript /tmp/R/text_analytics.R
+RUN Rscript /tmp/R/install_iR.R
+RUN R -e 'install.packages("xgboost")'
+RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
+cd xgboost && make Rbuild && sudo R CMD INSTALL xgboost_*.tar.gz
 
-ADD Scripts/Conda/install_ruby.sh /tmp/
-RUN bash /tmp/install_ruby.sh
+RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
+tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
+ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
+export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
 
-ADD Scripts/Conda/install_perl.sh /tmp/
-RUN bash /tmp/install_perl.sh
 
-ADD Scripts/Conda/install_scala.sh /tmp/
-RUN bash /tmp/install_scala.sh
 
-ADD Scripts/Conda/install_stack.sh /tmp/
-RUN bash /tmp/install_stack.sh
+RUN R -e 'IRkernel::installspec()'
 
-ADD Scripts/Conda/install_golang.sh /tmp/
-RUN bash /tmp/install_golang.sh
+
+
+
+# ADD Scripts/Conda/install_ruby.sh /tmp/
+# RUN bash /tmp/install_ruby.sh
+
+# ADD Scripts/Conda/install_perl.sh /tmp/
+# RUN bash /tmp/install_perl.sh
+
+# ADD Scripts/Conda/install_scala.sh /tmp/
+# RUN bash /tmp/install_scala.sh
+
+# ADD Scripts/Conda/install_stack.sh /tmp/
+# RUN bash /tmp/install_stack.sh
+
+# ADD Scripts/Conda/install_golang.sh /tmp/
+# RUN bash /tmp/install_golang.sh
 
 # # Sparklyr supports 2.1.0
 # ENV APACHE_SPARK_VERSION=2.1.0 HADOOP_VERSION=2.7 
