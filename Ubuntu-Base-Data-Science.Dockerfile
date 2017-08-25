@@ -36,8 +36,8 @@ RUN bash /tmp/install_conda_base.sh
 ADD Scripts/Libraries/install_libs_from_src.sh /tmp/
 RUN bash /tmp/install_libs_from_src.sh
 
-ADD Scripts/Conda/install_sagemath.sh /tmp/
-RUN bash /tmp/install_sagemath.sh
+# ADD Scripts/Conda/install_sagemath.sh /tmp/
+# RUN bash /tmp/install_sagemath.sh
 
 ADD Scripts/Conda/install_julia.sh /tmp/
 RUN bash /tmp/install_julia.sh
