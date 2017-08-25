@@ -29,11 +29,7 @@ RUN mkdir -p /etc/jupyter && chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
 USER $DATASCI_USER
 
 ENV ANACONDA_VERSION=Anaconda3-4.4.0-Linux-x86_64 GHC_VERSION=8.2.1 SAGEMATH=/opt/conda/envs/sagemath GOLANG_VERSION=1.8.3
-# Sparklyr supports 2.1.0
-ENV APACHE_SPARK_VERSION=2.1.0 HADOOP_VERSION=2.7 
-ENV SPARK_HOME=/opt/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}
 
-ADD Scripts /tmp/
 ADD Scripts/Conda/install_conda_base.sh /tmp/
 RUN bash /tmp/install_conda_base.sh
 
@@ -70,10 +66,12 @@ RUN bash /tmp/install_stack.sh
 ADD Scripts/Conda/install_golang.sh /tmp/
 RUN bash /tmp/install_golang.sh
 
+# # Sparklyr supports 2.1.0
+# ENV APACHE_SPARK_VERSION=2.1.0 HADOOP_VERSION=2.7 
+# ENV SPARK_HOME=/opt/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}
 
-
-ADD Scripts/Conda/install_spark.sh /tmp/
-RUN bash /tmp/install_spark.sh
+# ADD Scripts/Conda/install_spark.sh /tmp/
+# RUN bash /tmp/install_spark.sh
 
 ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/
 RUN bash /tmp/install_jupyter_widgets.sh
