@@ -12,6 +12,7 @@ conda install --yes -c conda-forge \
 	r-udunits2 \
 	r-rstudioapi \
 	r-rbokeh \
+	r-callr \
 	rpy2 \
 	rstudio
 
