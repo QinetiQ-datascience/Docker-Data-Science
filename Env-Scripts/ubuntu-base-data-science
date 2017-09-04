@@ -19,6 +19,7 @@ docker run --rm \
     -p 8000:8000 \
     -p 9001:9001 \
     -p 7000:7000 \
+    -p 3006:3006 \
     --device /dev/dri \
     --name ubuntu-base-data-science \
     qinetiq/ubuntu-base-data-science:latest

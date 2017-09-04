@@ -35,20 +35,16 @@ RUN bash /tmp/install_conda_base.sh
 
 ADD Scripts/Libraries/install_libs_from_src.sh /tmp/
 RUN bash /tmp/install_libs_from_src.sh
-
-# ADD Scripts/Conda/install_sagemath.sh /tmp/
-# RUN bash /tmp/install_sagemath.sh
 RUN conda install --yes -c conda-forge cmake autoconf automake pkg-config
+ENV R_HOME=$CONDA_DIR/lib/R
+ADD Scripts/Conda/install_r.sh /tmp/
+RUN bash /tmp/install_r.sh
 
-ADD Scripts/Conda/install_julia.sh /tmp/
-RUN bash /tmp/install_julia.sh
-
-ADD Scripts/Conda/install_nodejs.sh /tmp/
-RUN bash /tmp/install_nodejs.sh
-
-ADD Scripts/Conda/install_octave.sh /tmp/
-RUN bash /tmp/install_octave.sh
-USER root 
+ADD Scripts/R /tmp/R
+USER root
+RUN mkdir -p /usr/local/lib/R/etc/
+RUN mv /tmp/R/Rprofile.site $R_HOME/etc/Rprofile.site
+RUN chown $DATASCI_USER:$DATASCI_USER $R_HOME/etc/Rprofile.site
 RUN add-apt-repository ppa:jonathonf/gcc-7.1
 RUN  apt-get update && apt-get install --yes gcc-7 g++-7
 
@@ -63,18 +59,13 @@ RUN wget https://dl.bintray.com/boostorg/release/${boost_version}/source/${boost
     && ./bootstrap.sh \
     && ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install \
     && cd .. && rm -rf ${boost_dir} && ldconfig
-USER $DATASCI_USER
 
-ADD Scripts/Conda/install_r.sh /tmp/
-RUN bash /tmp/install_r.sh
-ENV R_HOME=$CONDA_DIR/lib/R
-ADD Scripts/R /tmp/R
-USER root
-RUN mkdir -p /usr/local/lib/R/etc/
-RUN mv /tmp/R/Rprofile.site $R_HOME/etc/Rprofile.site
-RUN chown $DATASCI_USER:$DATASCI_USER $R_HOME/etc/Rprofile.site
+RUN sudo apt-get update && apt-get -y install libreadline-dev libtinfo-dev
 USER $DATASCI_USER
-RUN R -e 'devtools::install_github("hadley/devtools",  branch = "dev")'
+RUN conda remove --force --yes readline && pip install readline --upgrade
+RUN conda install --channel conda-forge --yes ncurses 
+RUN sudo ln -s /bin/tar /bin/gtar
+RUN echo "$(sudo /opt/conda/bin/R CMD javareconf)"
 RUN Rscript /tmp/R/package_installs.R
 RUN Rscript /tmp/R/bioconductor_installs.R
 RUN Rscript /tmp/R/text_analytics.R
@@ -90,60 +81,4 @@ ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xm
 export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
 
 
-
-RUN R -e 'IRkernel::installspec()'
-
-
-
-
-# ADD Scripts/Conda/install_ruby.sh /tmp/
-# RUN bash /tmp/install_ruby.sh
-
-# ADD Scripts/Conda/install_perl.sh /tmp/
-# RUN bash /tmp/install_perl.sh
-
-# ADD Scripts/Conda/install_scala.sh /tmp/
-# RUN bash /tmp/install_scala.sh
-
-# ADD Scripts/Conda/install_stack.sh /tmp/
-# RUN bash /tmp/install_stack.sh
-
-# ADD Scripts/Conda/install_golang.sh /tmp/
-# RUN bash /tmp/install_golang.sh
-
-# # Sparklyr supports 2.1.0
-# ENV APACHE_SPARK_VERSION=2.1.0 HADOOP_VERSION=2.7 
-# ENV SPARK_HOME=/opt/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}
-
-# ADD Scripts/Conda/install_spark.sh /tmp/
-# RUN bash /tmp/install_spark.sh
-
-ADD Scripts/Jupyter/install_jupyter_widgets.sh /tmp/
-RUN bash /tmp/install_jupyter_widgets.sh
-
-ADD Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
-
-USER root 
-
-# ~~~~ CLEAN UP ~~~~
-RUN apt-get update && apt-get --yes upgrade && apt-get --yes autoremove && apt-get clean && \
-	rm -rf /var/lib/apt-get/lists/* && \
-	rm -rf /src/*.deb && \
-    rm -rf $CONDA_SRC/* && \
-    rm -rf /tmp/*
-# Expose Port For JupyterHub, Rstudio and Jupyter
-EXPOSE 8000 8787 8888-9001
-
-RUN rm /tmp/* -rf
-RUN cd /opt/ && wget https://download-cf.jetbrains.com/python/pycharm-community-2017.2.1.tar.gz && tar -xzf pycharm-community-2017.2.1.tar.gz
-RUN rm /opt/pycharm-community-2017.2.1.tar.gz
-RUN chown -R $DATASCI_USER:$DATASCI_USER /opt/pycharm-community-2017.2.1
-
-USER $DATASCI_USER
-
-RUN rm -rf $HOME/.cache/pip/* && conda clean -i -l -t --yes
-
-
-
-ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["/bin/bash"]
+# https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh

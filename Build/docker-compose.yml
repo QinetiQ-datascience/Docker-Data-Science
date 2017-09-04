@@ -1,11 +1,18 @@
 version: '2'
 services:
-  ubuntu-base-data-science:
-    container_name: ubuntu-base-data-science
+  # ubuntu-base-data-science:
+  #   container_name: ubuntu-base-data-science
+  #   build:
+  #     context: ../
+  #     dockerfile: Ubuntu-Base-Data-Science.Dockerfile
+  #   image: qinetiq/ubuntu-base-data-science:latest
+
+  ubuntu-base-r:
+    container_name: ubuntu-base-r
     build:
       context: ../
-      dockerfile: Ubuntu-Base-Data-Science.Dockerfile
-    image: qinetiq/ubuntu-base-data-science:latest
+      dockerfile: R.Dockerfile
+    image: qinetiq/ubuntu-base-r:latest
 
   # centos-base-data-science:
   #   container_name: centos-base-data-science
