@@ -65,11 +65,11 @@ USER $DATASCI_USER
 RUN conda remove --force --yes readline && pip install readline --upgrade
 RUN conda install --channel conda-forge --yes ncurses 
 RUN sudo ln -s /bin/tar /bin/gtar
-RUN echo "$(sudo /opt/conda/bin/R CMD javareconf)"
-RUN Rscript /tmp/R/package_installs.R
-RUN Rscript /tmp/R/bioconductor_installs.R
-RUN Rscript /tmp/R/text_analytics.R
-RUN Rscript /tmp/R/install_iR.R
+RUN echo "$(/opt/conda/bin/R CMD javareconf)"
+RUN sudo /opt/conda/bin/Rscript /tmp/R/package_installs.R
+RUN sudo /opt/conda/bin/Rscript /tmp/R/bioconductor_installs.R
+RUN sudo /opt/conda/bin/Rscript /tmp/R/text_analytics.R
+RUN sudo /opt/conda/bin/Rscript /tmp/R/install_iR.R
 
 RUN R -e 'install.packages("xgboost")'
 RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
