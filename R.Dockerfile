@@ -38,13 +38,13 @@ RUN bash /tmp/install_libs_from_src.sh
 RUN conda install --yes -c conda-forge cmake autoconf automake pkg-config
 ENV R_HOME=$CONDA_DIR/lib/R
 ADD Scripts/Conda/install_r.sh /tmp/
-RUN bash /tmp/install_r.sh
+# RUN bash /tmp/install_r.sh
 
 ADD Scripts/R /tmp/R
 USER root
-RUN mkdir -p /usr/local/lib/R/etc/
-RUN mv /tmp/R/Rprofile.site $R_HOME/etc/Rprofile.site
-RUN chown $DATASCI_USER:$DATASCI_USER $R_HOME/etc/Rprofile.site
+# RUN mkdir -p /usr/local/lib/R/etc/
+# RUN mv /tmp/R/Rprofile.site $R_HOME/etc/Rprofile.site
+# RUN chown $DATASCI_USER:$DATASCI_USER $R_HOME/etc/Rprofile.site
 RUN add-apt-repository ppa:jonathonf/gcc-7.1
 RUN  apt-get update && apt-get install --yes gcc-7 g++-7
 
@@ -65,20 +65,54 @@ USER $DATASCI_USER
 RUN conda remove --force --yes readline && pip install readline --upgrade
 RUN conda install --channel conda-forge --yes ncurses 
 RUN sudo ln -s /bin/tar /bin/gtar
-RUN echo "$(/opt/conda/bin/R CMD javareconf)"
-RUN sudo /opt/conda/bin/Rscript /tmp/R/package_installs.R
-RUN sudo /opt/conda/bin/Rscript /tmp/R/bioconductor_installs.R
-RUN sudo /opt/conda/bin/Rscript /tmp/R/text_analytics.R
-RUN sudo /opt/conda/bin/Rscript /tmp/R/install_iR.R
+RUN sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list && gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 &&  gpg -a --export E084DAB9 | sudo apt-key add -
+RUN sudo apt-get update && sudo apt-get --yes install r-base r-base-dev
+RUN sudo apt-get update && sudo apt-get --yes install gdebi-core
+RUN cd /tmp && wget https://download1.rstudio.org/rstudio-0.99.896-amd64.deb
+RUN sudo gdebi -n /tmp/rstudio-0.99.896-amd64.deb && sudo rm /tmp/rstudio-0.99.896-amd64.deb
+USER root
+RUN apt-get update && \
+    (echo N; echo N) | apt-get install -y -f r-cran-rgtk2 && \
+    apt-get install -y -f libv8-dev libgeos-dev libgdal-dev libproj-dev \
+    libtiff5-dev libfftw3-dev libjpeg-dev libhdf4-0-alt libhdf4-alt-dev \
+    libhdf5-dev libx11-dev cmake libglu1-mesa-dev libgtk2.0-dev patch
 
-RUN R -e 'install.packages("xgboost")'
-RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
-cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz
+    # data.table added here because rcran missed it, and xgboost needs it
+  RUN R -e 'options(unzip = "internal", repos = c(CRAN = "http://cran.rstudio.com")); \
+  install.packages("devtools"); \
+  devtools::install_github("hadley/devtools",  branch = "dev"); \
+  install.packages("DiagrammeR");'
+# 	DiagrammeR \
+# 	mefa \
+# 	gridSVG \
+# 	rgeos \
+# 	rgdal \
+# 	rARPACK \
+# 	prevR \
+# 	Amelia \
+# 	rattle && \
+#     # XGBoost gets special treatment because the nightlies are hard to build with devtools.
+#     cd /usr/local/src && git clone --recursive https://github.com/dmlc/xgboost && \
+#     cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz && \
+#     # Prereq for installing udunits2 package; see https://github.com/edzer/units
+#     cd /usr/local/src && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
+#     tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
+#     ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
+#     export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml" && \
+# RUN echo "$(/opt/conda/bin/R CMD javareconf)"
+# RUN sudo Rscript /tmp/R/package_installs.R
+# # RUN sudo /opt/conda/bin/Rscript /tmp/R/bioconductor_installs.R
+# # RUN sudo /opt/conda/bin/Rscript /tmp/R/text_analytics.R
+# # RUN sudo /opt/conda/bin/Rscript /tmp/R/install_iR.R
 
-RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
-tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
-ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
-export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
+# RUN R -e 'install.packages("xgboost")'
+# RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
+# cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz
+
+# RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
+# tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
+# ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
+# export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
 
 
 # https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
