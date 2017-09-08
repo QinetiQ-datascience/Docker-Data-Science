@@ -1,6 +1,10 @@
-options(unzip = "internal", repos = c(CRAN = "http://cran.rstudio.com"))
-devtools::install_github("hadley/devtools",  branch = "dev")
 library(devtools)
+install.packages("stringi", ,type="linux.binary")
+install.packages("concaveman");
+devtools::install_github("hadley/devtools",  branch = "dev")
+devtools::install_github("r-spatial/sf")
+devtools::install_github("gaborcsardi/pkgconfig")
+devtools::install_github("igraph/rigraph")
 devtools::install_github("hadley/readr")
 devtools::install_github("jkrijthe/Rtsne")
 devtools::install_github("jennybc/gapminder")
@@ -16,7 +20,8 @@ devtools::install_github("elbamos/largevis", ref="develop")  # Using development
 devtools::install_github("dgrtwo/widyr")
 devtools::install_github("ellisp/forecastxgb-r-package/pkg")
 devtools::install_github("rstudio/leaflet")
-devtools::install_github("Microsoft/LightGBM", subdir = "R-package")
+devtools::install_github("Laurae2/lgbdl")
+# devtools::install_github("Microsoft/LightGBM", subdir = "R-package")
 devtools::install_github("hrbrmstr/hrbrthemes")
 
 install.packages("genderdata", repos = "http://packages.ropensci.org")

@@ -25,6 +25,8 @@ VOLUME ["$Documents", "$Downloads", "$Workspace"]
 ENV Jupyter_Share=/usr/local/share/jupyter
 RUN mkdir -p $Jupyter_Share && chown -R $DATASCI_USER:$DATASCI_USER $Jupyter_Share
 RUN mkdir -p /etc/jupyter && chown -R $DATASCI_USER:$DATASCI_USER /etc/jupyter/
+RUN add-apt-repository ppa:jonathonf/gcc-7.1
+RUN  apt-get update && apt-get install --yes gcc-7 g++-7 glibc-source g++-7-multilib libv8-dev
 
 USER $DATASCI_USER
 
@@ -36,17 +38,12 @@ RUN bash /tmp/install_conda_base.sh
 ADD Scripts/Libraries/install_libs_from_src.sh /tmp/
 RUN bash /tmp/install_libs_from_src.sh
 RUN conda install --yes -c conda-forge cmake autoconf automake pkg-config
-ENV R_HOME=$CONDA_DIR/lib/R
-ADD Scripts/Conda/install_r.sh /tmp/
-# RUN bash /tmp/install_r.sh
-
-ADD Scripts/R /tmp/R
+RUN conda install --yes -c creditx gcc-7
 USER root
-# RUN mkdir -p /usr/local/lib/R/etc/
-# RUN mv /tmp/R/Rprofile.site $R_HOME/etc/Rprofile.site
-# RUN chown $DATASCI_USER:$DATASCI_USER $R_HOME/etc/Rprofile.site
-RUN add-apt-repository ppa:jonathonf/gcc-7.1
-RUN  apt-get update && apt-get install --yes gcc-7 g++-7
+# RUN rm /usr/bin/gcc
+# RUN sudo ln -s $CONDA_DIR/bin/gcc /usr/bin/gcc
+RUN echo "$(which gcc)"
+RUN echo "$(gcc --version)"
 
 ARG boost_version=1.65.0
 ARG boost_dir=boost_1_65_0
@@ -60,28 +57,84 @@ RUN wget https://dl.bintray.com/boostorg/release/${boost_version}/source/${boost
     && ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install \
     && cd .. && rm -rf ${boost_dir} && ldconfig
 
-RUN sudo apt-get update && apt-get -y install libreadline-dev libtinfo-dev
-USER $DATASCI_USER
-RUN conda remove --force --yes readline && pip install readline --upgrade
-RUN conda install --channel conda-forge --yes ncurses 
-RUN sudo ln -s /bin/tar /bin/gtar
-RUN sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list && gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 &&  gpg -a --export E084DAB9 | sudo apt-key add -
-RUN sudo apt-get update && sudo apt-get --yes install r-base r-base-dev
-RUN sudo apt-get update && sudo apt-get --yes install gdebi-core
-RUN cd /tmp && wget https://download1.rstudio.org/rstudio-0.99.896-amd64.deb
-RUN sudo gdebi -n /tmp/rstudio-0.99.896-amd64.deb && sudo rm /tmp/rstudio-0.99.896-amd64.deb
-USER root
-RUN apt-get update && \
-    (echo N; echo N) | apt-get install -y -f r-cran-rgtk2 && \
-    apt-get install -y -f libv8-dev libgeos-dev libgdal-dev libproj-dev \
-    libtiff5-dev libfftw3-dev libjpeg-dev libhdf4-0-alt libhdf4-alt-dev \
-    libhdf5-dev libx11-dev cmake libglu1-mesa-dev libgtk2.0-dev patch
+# RUN sudo apt-get update && apt-get -y install libreadline-dev libtinfo-dev libicu55 libicu-dev libjpeg-dev libjpeg62
 
+
+
+RUN sudo ln -s /bin/tar /bin/gtar
+# RUN sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list && gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 &&  gpg -a --export E084DAB9 | sudo apt-key add -
+# RUN sudo apt-get update && sudo apt-get --yes install gdebi-core
+# ENV R_BASE_VERSION=3.4.1
+
+## Now install R and littler, and create a link for littler in /usr/local/bin
+## Also set a default CRAN repo, and make sure littler knows about it too
+# RUN apt-get update \
+# 	&& apt-get install -y \
+# 		littler \
+#         r-cran-littler \
+# 		r-base=${R_BASE_VERSION}* \
+# 		r-base-dev=${R_BASE_VERSION}* \
+# 		r-recommended=${R_BASE_VERSION}* \
+#         && echo 'options(repos = c(CRAN = "https://www.stats.bris.ac.uk/R/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site \
+#         && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
+# 	&& ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
+# 	&& ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
+# 	&& ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
+# 	&& ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
+# 	&& install.r docopt \
+# 	&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+# 	&& rm -rf /var/lib/apt/lists/*
+# USER $DATASCI_USER
+
+# USER root
+# RUN apt-get update && apt-get install -y -f r-cran-rgtk2 && \
+#     apt-get install -y -f libv8-dev libgeos-dev libgdal-dev libproj-dev \
+#     libtiff5-dev libfftw3-dev libjpeg-dev libhdf4-0-alt libhdf4-alt-dev \
+#     libhdf5-dev libx11-dev cmake libglu1-mesa-dev libgtk2.0-dev patch fcitx-frontend-qt5 \
+# 	fcitx-modules \
+# 	fcitx-module-dbus \
+# 	libedit2 \
+# 	libgl1-mesa-dri \
+# 	libgl1-mesa-glx \
+# 	libgstreamer0.10-0 \
+# 	libgstreamer-plugins-base0.10-0 \
+# 	libjpeg-dev \
+# 	libpresage-data \
+# 	libqt5core5a \
+# 	libqt5dbus5 \
+# 	libqt5gui5 \
+# 	libqt5network5 \
+# 	libqt5printsupport5 \
+# 	libqt5webkit5 \
+# 	libqt5widgets5 \
+# 	libtiff5 \
+# 	libxcomposite1 \
+# 	libxslt1.1 \
+# 	littler \
+# 	&& rm -rf /var/lib/apt/lists/* \
+# 	&& rm -rf /src/*.deb \
+# 	&&  ln -f -s /usr/lib/rstudio/bin/rstudio /usr/bin/rstudio
     # data.table added here because rcran missed it, and xgboost needs it
-  RUN R -e 'options(unzip = "internal", repos = c(CRAN = "http://cran.rstudio.com")); \
-  install.packages("devtools"); \
-  devtools::install_github("hadley/devtools",  branch = "dev"); \
-  install.packages("DiagrammeR");'
+USER $DATASCI_USER
+ENV R_BASE_VERSION=3.4.1
+RUN conda install --yes -c conda-forge icu readline libtool
+ADD Scripts/Conda/install_r.sh /tmp/
+RUN bash /tmp/install_r.sh
+ADD Scripts/R /tmp/R
+USER root
+RUN apt-get update && apt-get install -y -f littler \
+    && echo 'options(unzip="internal", repos = c(CRAN = "https://www.stats.bris.ac.uk/R/"), download.file.method = "libcurl")' >> $CONDA_DIR/lib/R/etc/Rprofile.site \
+    && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
+	&& ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
+	&& ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
+	&& ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
+	&& ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN echo "$(R CMD javareconf)"
+
+
+
 # 	DiagrammeR \
 # 	mefa \
 # 	gridSVG \
@@ -99,20 +152,23 @@ RUN apt-get update && \
 #     tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
 #     ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
 #     export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml" && \
-# RUN echo "$(/opt/conda/bin/R CMD javareconf)"
-# RUN sudo Rscript /tmp/R/package_installs.R
-# # RUN sudo /opt/conda/bin/Rscript /tmp/R/bioconductor_installs.R
-# # RUN sudo /opt/conda/bin/Rscript /tmp/R/text_analytics.R
-# # RUN sudo /opt/conda/bin/Rscript /tmp/R/install_iR.R
 
-# RUN R -e 'install.packages("xgboost")'
-# RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
-# cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz
+RUN echo "$(ls -l /usr/include/sys/cdefs.h)"
+RUN Rscript /tmp/R/package_installs.R
+RUN Rscript /tmp/R/bioconductor_installs.R
+RUN Rscript /tmp/R/text_analytics.R
+RUN Rscript /tmp/R/install_iR.R
 
-# RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
-# tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
-# ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
-# export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
+RUN R -e 'install.packages("xgboost")'
+RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
+cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz
 
+USER root
+RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
+tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
+ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
+export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
 
+USER $DATASCI_USER
+ADD Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 # https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
