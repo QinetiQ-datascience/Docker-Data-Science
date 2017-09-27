@@ -169,6 +169,12 @@ tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && mak
 ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
 export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
 
+RUN cd /opt/ && wget https://download-cf.jetbrains.com/python/pycharm-community-2017.2.1.tar.gz && tar -xzf pycharm-community-2017.2.1.tar.gz
+RUN rm /opt/pycharm-community-2017.2.1.tar.gz
+RUN chown -R $DATASCI_USER:$DATASCI_USER /opt/pycharm-community-2017.2.1
+
 USER $DATASCI_USER
+ADD Scripts/Conda/install_octave.sh /tmp/
+RUN bash /tmp/install_octave.sh
 ADD Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 # https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
