@@ -14,7 +14,7 @@ docker run --rm \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -e DISPLAY=unix$DISPLAY \
     -e ${HOME} \
-    -p 8888-9000:8888-9000 \
+    -p 8888-8889:8888-8889 \
     -p 8787:8787 \
     -p 8000:8000 \
     -p 9001:9001 \
