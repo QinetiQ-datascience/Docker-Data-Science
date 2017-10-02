@@ -17,36 +17,36 @@ conda install --yes -c conda-forge \
 	r-igraph \
 	r-rcurl \
 	r-plyr \
-    r-tidyverse \
-    r-shiny \
-    r-rmarkdown \
-    r-bookdown \
-    r-forecast \
-    r-rsqlite \
-    r-reshape2 \
-    r-nycflights13 \
-    r-caret \
-    r-crayon \
-    r-randomforest \
-    r-gplots \
-    r-httr \
-    r-knitr \
-    r-rcolorbrewer \
-    r-rjava \
-    r-rjson \
-    r-r.methodss3 \
-    r-r.oo \
-    r-stringr \
-    r-testthat \
-    r-xml \
-    r-dt \
-    r-htmlwidgets \
-    r-diagrammer \
-    r-sf \
-    r-igraph \
-    r-cairo \
+  r-tidyverse \
+  r-shiny \
+  r-rmarkdown \
+  r-bookdown \
+  r-forecast \
+  r-rsqlite \
+  r-reshape2 \
+  r-nycflights13 \
+  r-caret \
+  r-crayon \
+  r-randomforest \
+  r-gplots \
+  r-httr \
+  r-knitr \
+  r-rcolorbrewer \
+  r-rjava \
+  r-rjson \
+  r-r.methodss3 \
+  r-r.oo \
+  r-stringr \
+  r-testthat \
+  r-xml \
+  r-dt \
+  r-htmlwidgets \
+  r-diagrammer \
+  r-sf \
+  r-igraph \
+  r-cairo \
 	rpy2 \
-	rstudio
+	rstudio 
 
 # cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
 # cd xgboost && sudo make Rbuild && sudo R CMD INSTALL xgboost_*.tar.gz

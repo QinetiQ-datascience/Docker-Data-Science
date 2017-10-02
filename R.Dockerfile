@@ -1,7 +1,8 @@
 FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
-
+ENV http_proxy "http://wwwproxy.qinetiq.com:80"
+ENV https_proxy "http://wwwproxy.qinetiq.com:80"
 # Configure environment
 ENV DEBIAN_FRONTEND=noninteractive SHELL=/bin/bash NAME=ubuntu-base-data-science DATASCI_USER=datasci DATASCI_UID=1000
 ENV HOME=/home/$DATASCI_USER
@@ -168,21 +169,24 @@ RUN Rscript /tmp/R/bioconductor_installs.R
 RUN Rscript /tmp/R/text_analytics.R
 RUN Rscript /tmp/R/install_iR.R
 
-RUN R -e 'install.packages("xgboost")'
-RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
-cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz
+# RUN R -e 'install.packages("xgboost")'
+
+# RUN cd $CONDA_SRC && git clone --recursive https://github.com/dmlc/xgboost && \
+# cd xgboost && make Rbuild && R CMD INSTALL xgboost_*.tar.gz
 
 USER root
-RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
-tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
-ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
-export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
+# RUN cd $CONDA_SRC && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.24.tar.gz && \
+# tar zxf udunits-2.2.24.tar.gz && cd udunits-2.2.24 && ./configure && make && make install && \
+# ldconfig && echo 'export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"' >> ~/.bashrc && \
+# export UDUNITS2_XML_PATH="/usr/local/share/udunits/udunits2.xml"
 
 RUN cd /opt/ && wget https://download-cf.jetbrains.com/python/pycharm-community-2017.2.1.tar.gz && tar -xzf pycharm-community-2017.2.1.tar.gz
 RUN rm /opt/pycharm-community-2017.2.1.tar.gz
 RUN chown -R $DATASCI_USER:$DATASCI_USER /opt/pycharm-community-2017.2.1
-
+RUN apt-get update && apt-get install --yes --no-install-recommends libedit2 libgl1-mesa-dri libgl1-mesa-glx
 USER $DATASCI_USER
+ENV OCTAVE_VERSION=4.2.1
+ENV GNUPLOT_VERSION=5.0.*
 ADD Scripts/Conda/install_octave.sh /tmp/
 RUN bash /tmp/install_octave.sh
 RUN cd /tmp &&  wget https://downloads.sourceforge.net/octave/control-3.0.0.tar.gz
