@@ -57,11 +57,8 @@ if [ "${os_environment}" == "Ubuntu" ]; then
     fonts-liberation \
     software-properties-common \
     python-software-properties \
-<<<<<<< HEAD
     vim nano \
     net-tools netcat rsync \
-=======
->>>>>>> 072b996d8869591c60f1f6a2f58b0448a11d02a9
     git subversion mercurial && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -92,43 +89,25 @@ if [ "${os_environment}" == "Ubuntu" ]; then
     # libxcomposite-dev littler && \
     # Install Java
     # echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-<<<<<<< HEAD
-=======
     # apt-get update && \
->>>>>>> 072b996d8869591c60f1f6a2f58b0448a11d02a9
     # add-apt-repository --yes ppa:webupd8team/java && \
     # apt-get update && \
     # apt-get install --yes  oracle-java8-installer && \
     # apt-get install --yes oracle-java8-set-default && \
     # rm -rf /var/lib/apt/lists/* && \
     # rm -rf /var/cache/oracle-jdk8-installer
-<<<<<<< HEAD
-    #
-=======
-
->>>>>>> 072b996d8869591c60f1f6a2f58b0448a11d02a9
     # apt-get update && apt-get --yes build-dep octave && \
     # apt-get clean && \
     # rm -rf /var/lib/apt/lists/*
 
-<<<<<<< HEAD
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
     add-apt-repository -u "deb http://rodeo-deb.yhat.com/ rodeo main"
-=======
-    # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
-    # sudo add-apt-repository -u "deb http://rodeo-deb.yhat.com/ rodeo main"
-    #
-    # #### install rodeo and run it
-    # apt-get update && apt-get --yes install rodeo
->>>>>>> 072b996d8869591c60f1f6a2f58b0448a11d02a9
 
     # Rodeo GUI Requirements
     # apt-get update && apt-get --yes install  libxss1 libgconf-2-4 libnss3 libasound2
     # add-apt-repository ppa:wireshark-dev/stable
-<<<<<<< HEAD
+
     apt-get update && apt-get --yes install rodeo
-=======
->>>>>>> 072b996d8869591c60f1f6a2f58b0448a11d02a9
     # apt-get update && apt-get --yes install rodeo vim gedit nano net-tools netcat wireshark rsync
 
 
@@ -182,8 +161,5 @@ wget --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/t
 chmod +x $TINI_DIR/tini
 chown -R $DATASCI_USER:$DATASCI_USER $TINI_DIR
 cp $TINI_DIR/tini /usr/bin/tini
-<<<<<<< HEAD
 
 usermod -aG audio,video $DATASCI_USER
-=======
->>>>>>> 072b996d8869591c60f1f6a2f58b0448a11d02a9

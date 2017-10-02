@@ -1,8 +1,8 @@
 FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 
 MAINTAINER Josh Cole <jwcole1@qinetiq.com>
-ENV http_proxy "http://wwwproxy.qinetiq.com:80"
-ENV https_proxy "http://wwwproxy.qinetiq.com:80"
+# ENV http_proxy "http://wwwproxy.qinetiq.com:80"
+# ENV https_proxy "http://wwwproxy.qinetiq.com:80"
 # Configure environment
 ENV DEBIAN_FRONTEND=noninteractive SHELL=/bin/bash NAME=ubuntu-base-data-science DATASCI_USER=datasci DATASCI_UID=1000
 ENV HOME=/home/$DATASCI_USER
