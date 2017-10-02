@@ -20,6 +20,7 @@ shapely \
 rtree \
 pyproj \
 pyshp \
+accelerate \
 gdal
 
 conda clean -tipsy

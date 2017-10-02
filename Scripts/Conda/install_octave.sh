@@ -3,7 +3,7 @@ set -e
 
 # conda install --yes -c conda-forge \
 # 	readline \
-# 	octave 
+# 	octave
 
 
 
@@ -52,13 +52,19 @@ set -e
 #   ./configure --with-blas="-Wl,--start-group -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -Wl,--end-group -liomp5 -lpthread" --with-lapack="-Wl,--start-group -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -Wl,--end-group -liomp5 -lpthread" --enable-64
 
 # #pkg load package_name
-sudo apt-add-repository ppa:octave/stable
-sudo apt-get update && sudo apt-get --yes build-dep octave && \
-sudo apt-get install --yes octave octave-signal octave-control liboctave4 liboctave-dev && \
-sudo apt-get clean && \
-sudo rm -rf /var/lib/apt/lists/*
+# sudo apt-add-repository ppa:octave/stable
+# sudo apt-get update && sudo apt-get --yes build-dep octave && \
+# sudo apt-get install --yes octave octave-signal octave-control liboctave4 liboctave-dev && \
+# sudo apt-get clean && \
+# sudo rm -rf /var/lib/apt/lists/*s
 
-pip install octave_kernel && python -m octave_kernel.install
-conda install --yes -c conda-forge oct2py
+# pip install octave_kernel && python -m octave_kernel.install
+conda install --yes -c conda-forge octave octave_kernel oct2py
 
-mv $HOME/.local/share/jupyter/kernels/octave $CONDA_DIR/share/jupyter/kernels
+# cd /tmp &&  wget https://downloads.sourceforge.net/octave/control-3.0.0.tar.gz &&  wget https://downloads.sourceforge.net/octave/signal-1.3.2.tar.gz && wget https://downloads.sourceforge.net/octave/statistics-1.3.0.tar.gz \
+# wget https://downloads.sourceforge.net/octave/io-2.4.7.tar.gz
+
+# octave --eval "pkg install control-3.0.0.tar.gz"
+# octave --eval "pkg install signal-1.3.2.tar.gz"
+# octave --eval "pkg install io-2.4.7.tar.gz"
+# mv $HOME/.local/share/jupyter/kernels/octave $CONDA_DIR/share/jupyter/kernels
