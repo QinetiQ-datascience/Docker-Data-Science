@@ -70,4 +70,6 @@ RUN cd /tmp && octave --eval "pkg install io-2.4.7.tar.gz"
 RUN conda install --yes -c conda-forge jupyterlab
 ADD Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 RUN conda update --all --yes
+conda install --yes -c conda-forge xorg-libxtst
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/
 # https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
