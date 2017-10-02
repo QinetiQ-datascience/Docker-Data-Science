@@ -59,7 +59,8 @@ if [ "${os_environment}" == "Ubuntu" ]; then
     python-software-properties \
     vim nano \
     net-tools netcat rsync \
-    git subversion mercurial && \
+    git subversion mercurial \
+    libedit2 libgl1-mesa-dri libgl1-mesa-glx libv8-3.14-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     # libmagic-dev libghc-cairo-prof libcairo2-dev glib-2.0-dev libtinfo-dev \
@@ -100,14 +101,14 @@ if [ "${os_environment}" == "Ubuntu" ]; then
     # apt-get clean && \
     # rm -rf /var/lib/apt/lists/*
 
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
-    add-apt-repository -u "deb http://rodeo-deb.yhat.com/ rodeo main"
+    # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
+    # add-apt-repository -u "deb http://rodeo-deb.yhat.com/ rodeo main"
 
     # Rodeo GUI Requirements
     # apt-get update && apt-get --yes install  libxss1 libgconf-2-4 libnss3 libasound2
     # add-apt-repository ppa:wireshark-dev/stable
 
-    apt-get update && apt-get --yes install rodeo
+    # apt-get update && apt-get --yes install rodeo
     # apt-get update && apt-get --yes install rodeo vim gedit nano net-tools netcat wireshark rsync
 
 
@@ -163,3 +164,4 @@ chown -R $DATASCI_USER:$DATASCI_USER $TINI_DIR
 cp $TINI_DIR/tini /usr/bin/tini
 
 usermod -aG audio,video $DATASCI_USER
+ln -s /bin/tar /bin/gtar

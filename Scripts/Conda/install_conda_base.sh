@@ -22,9 +22,3 @@ pyproj \
 pyshp \
 accelerate \
 gdal
-
-conda clean -tipsy
-
-pip install --upgrade pip
-pip install ipyleaflet --upgrade
-pip install bash_kernel && python -m bash_kernel.install --sys-prefix

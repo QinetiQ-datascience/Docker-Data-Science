@@ -1,0 +1,25 @@
+#!/bin/sh
+
+USER_NAME="datasci"
+HOME_DIR="/home/$USER_NAME"
+
+# Users home is mounted as home
+# --rm will remove the container as soon as it ends
+docker run --rm \
+    -i -t \
+    -v $HOME/Documents:${HOME_DIR}/Documents \
+    -v $HOME/Downloads:${HOME_DIR}/Downloads \
+    -v $HOME/Workspace:${HOME_DIR}/Workspace \
+    -w $HOME_DIR \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY=unix$DISPLAY \
+    -e ${HOME} \
+    -p 8889:8889 \
+    -p 8787:8787 \
+    -p 8000:8000 \
+    -p 9001:9001 \
+    -p 7000:7000 \
+    -p 3006:3006 \
+    --device /dev/dri \
+    --name ubuntu-octave \
+    qinetiq/ubuntu-octave:latest

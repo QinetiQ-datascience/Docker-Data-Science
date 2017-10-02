@@ -7,12 +7,12 @@ services:
   #     dockerfile: Ubuntu-Base-Data-Science.Dockerfile
   #   image: qinetiq/ubuntu-base-data-science:latest
 
-  ubuntu-base-r:
-    container_name: ubuntu-base-r
+  ubuntu-octave:
+    container_name: ubuntu-octave
     build:
       context: ../
-      dockerfile: R.Dockerfile
-    image: qinetiq/ubuntu-base-r:latest
+      dockerfile: Octave.Dockerfile
+    image: qinetiq/ubuntu-octave:latest
 
   # centos-base-data-science:
   #   container_name: centos-base-data-science
@@ -34,7 +34,7 @@ services:
   #     context: ../
   #     dockerfile: Rstudio-server.Dockerfile
   #   image: qinetiq/rstudio-server:latest
-    
+
   # spark-data-science:
   #   container_name: spark-data-science
   #   build:
