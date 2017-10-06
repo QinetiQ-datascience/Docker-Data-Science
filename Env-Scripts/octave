@@ -20,6 +20,8 @@ docker run --rm \
     -p 9001:9001 \
     -p 7000:7000 \
     -p 3006:3006 \
+    -p 1433:1433 \
     --device /dev/dri \
     --name ubuntu-octave \
     qinetiq/ubuntu-octave:latest
+    # -p 33000-33999:33000-33999 \

@@ -70,6 +70,59 @@ RUN cd /tmp && octave --eval "pkg install io-2.4.7.tar.gz"
 RUN conda install --yes -c conda-forge jupyterlab
 ADD Scripts/Jupyter/jupyter_notebook_config.py /etc/jupyter/
 RUN conda update --all --yes
-conda install --yes -c conda-forge xorg-libxtst
+RUN conda install --yes -c conda-forge xorg-libxtst
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/
 # https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+USER root
+RUN apt-get update && apt-get install --yes apt-transport-https libreadline-dev
+# http://www.unixodbc.org/unixODBC-2.3.4.tar.gz
+RUN cd /tmp && wget http://www.unixodbc.org/unixODBC-2.3.4.tar.gz
+RUN cd /tmp && tar -zxf unixODBC-2.3.4.tar.gz
+RUN cd /tmp/unixODBC-2.3.4 && ./configure --prefix=/usr --sysconfdir=/etc/unixODBC && make && make install
+RUN apt-get update && apt-get install --yes libssl1.0.0 libgss3
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+
+RUN  apt-get update && ACCEPT_EULA=Y apt-get install --yes msodbcsql
+# optional: for bcp and sqlcmd
+RUN apt-get update && ACCEPT_EULA=Y apt-get install --yes mssql-tools
+RUN apt-get update && apt-get install --yes unixodbc-dev
+RUN apt-get update &&  add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN apt-get update && apt-get upgrade --yes
+RUN apt-get update && apt-get install --yes libstdc++6
+RUN ldconfig
+
+USER $DATASCI_USER
+RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
+RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+# RUN cd /tmp && wget https://packages.microsoft.com/ubuntu/16.04/prod/pool/main/m/msodbcsql/msodbcsql_13.1.9.1-1_amd64.deb
+USER root
+ADD Scripts/sql-server/installodbc.sh /tmp/
+# RUN cd /tmp && sh installodbc.sh
+# .RUN cd /tmp/unixODBC-2.3.4 && ./configure --disable-gui --disable-drivers --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE 1 && make && make install
+RUN apt-get update && apt-get install --yes iputils-ping
+USER $DATASCI_USER
+RUN conda install --yes -c conda-forge pymssql
+USER root
+RUN locale-gen "en_US.UTF-8"
+USER $DATASCI_USER
+RUN sudo locale-gen "en_US.UTF-8"
+
+RUN pip install blaze --upgrade
+RUN pip install graphviz --upgrade
+
+USER root
+
+RUN apt-get update && apt-get install --yes graphviz
+RUN apt-get update && apt-get upgrade --yes
+USER $DATASCI_USER
+
+
+# ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib
+# RUN rm /opt/conda/lib/libtinfo.so.5
+# USER root
+# RUN cd /tmp && wget https://gallery.technet.microsoft.com/ODBC-Driver-13-for-Ubuntu-b87369f0/file/154097/2/installodbc.sh && sh installodbc.sh
+# USER $DATASCI_USER
+# RUN source ~/.bashrc
+# optional: for unixODBC development headers
