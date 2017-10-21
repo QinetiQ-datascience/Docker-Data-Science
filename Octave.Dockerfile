@@ -68,6 +68,7 @@ RUN apt-get update && apt-get install --yes libstdc++6 libstdc++-6-dev libblas-d
 RUN rm $CONDA_DIR/lib/libtinfo.so.5
 RUN apt-get update && apt-get install --yes gcc-5 libgcc-5-dev libstdc++-5-dev gfortran-5 gcc-6 libgcc-6-dev libstdc++-6-dev gfortran-6
 
+<<<<<<< HEAD
 RUN ldconfig
 USER $DATASCI_USER
 RUN mkdir /home/datasci/octave
@@ -82,6 +83,7 @@ RUN octave --eval "cd /home/datasci/octave; \
 
 COPY Scripts/Octave/qt-settings $HOME/.config/octave/
 RUN sudo chown datasci:datasci $HOME/.config/octave/qt-settings
+# RUN apt-get update && apt-get install --yes graphviz
 # RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/control-2.8.0.tar.gz -P /home/datasci/octave
 # RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/general-1.3.4.tar.gz -P /home/datasci/octave
 # RUN wget http://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/signal-1.3.0.tar.gz -P /home/datasci/octave
