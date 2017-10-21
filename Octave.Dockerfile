@@ -68,7 +68,6 @@ RUN apt-get update && apt-get install --yes libstdc++6 libstdc++-6-dev libblas-d
 RUN rm $CONDA_DIR/lib/libtinfo.so.5
 RUN apt-get update && apt-get install --yes gcc-5 libgcc-5-dev libstdc++-5-dev gfortran-5 gcc-6 libgcc-6-dev libstdc++-6-dev gfortran-6
 
-<<<<<<< HEAD
 RUN ldconfig
 USER $DATASCI_USER
 RUN mkdir /home/datasci/octave
