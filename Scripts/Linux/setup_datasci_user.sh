@@ -1,35 +1,5 @@
 #!/bin/bash
 set -e
-os_environment="$(cat /etc/issue | head -n1 | awk '{print $1;}')"
-
-if [ "${os_environment}" == "\S" ]; then
-    os_environment="Centos"
-fi
-
-echo "OS Environment: $os_environment"
-
-if [ "${os_environment}" == "Ubuntu" ]; then
-
-    apt-get update && apt-get --yes upgrade && apt-get --yes --no-install-recommends install aptitude apt-utils sudo locales && \
-    apt-get clean all && rm -rf /var/lib/apt/lists/*
-    # Locale
-    sed -i -e 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen && \
-    locale-gen
-
-elif [ "${os_environment}" == "Centos" ]; then
-
-    yum update -y &&  yum install -y epel-release deltarpm dnf && yum clean all && rm -rf /var/lib/apt/lists/*y
-    dnf -y update && dnf install -y dnf-plugins-core copr-cli
-
-    # The Basics
-    yum -y update && yum -y upgrade && yum -y install yum-utils sudo && \
-    yum clean all && rm -rf /var/lib/apt/lists/*
-
-    #Locale
-    localedef -i en_GB -f UTF-8 en_GB.UTF-8
-else
-    echo "Unknown"
-fi
 
 useradd -m --shell /bin/bash --uid $DATASCI_UID --user-group $DATASCI_USER
 
@@ -47,111 +17,44 @@ mkdir -p $Documents && chown -R $DATASCI_USER:$DATASCI_USER $Documents
 mkdir -p $Downloads && chown -R $DATASCI_USER:$DATASCI_USER $Downloads
 mkdir -p $Workspace && chown -R $DATASCI_USER:$DATASCI_USER $Workspace
 
-if [ "${os_environment}" == "Ubuntu" ]; then
-    apt-get update && apt-get install -yq --no-install-recommends \
-    wget \
-    curl \
-    bzip2 \
-    unzip \
-    ca-certificates \
-    fonts-liberation \
-    software-properties-common \
-    python-software-properties \
-    vim nano \
-    net-tools netcat rsync \
-    git subversion mercurial \
-    libedit2 libgl1-mesa-dri libgl1-mesa-glx libv8-3.14-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-    # libmagic-dev libghc-cairo-prof libcairo2-dev glib-2.0-dev libtinfo-dev \
-    # libunwind-dev libicu-dev libzmq5-dev libpango1.0-dev libblas-dev \
-    # liblapack-dev texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra \
-    # texlive-fonts-recommended texlive-generic-recommended pandoc libghc-pandoc-dev \
-    # libboost-all-dev \
-    # fcitx-frontend-qt5 fcitx-modules fcitx-module-dbus \
-    # libedit2 libgl1-mesa-dri libgl1-mesa-glx \
-    # libgstreamer0.10-0 libgstreamer-plugins-base0.10-0 \
-    # libjpeg-dev libjpeg-turbo8-dev libpresage-dev libpresage-data \
-    # libqt5core5a libqt5dbus5 libqt5gui5 libqt5network5 libqt5printsupport5 \
-    # libqt5webkit5 libqt5widgets5 libtiff5 libxcomposite1 libxslt1.1 \
-    # libxcomposite-dev littler && \
+apt-get update && apt-get install -yq --no-install-recommends \
+wget \
+curl \
+bzip2 \
+unzip \
+ca-certificates \
+fonts-liberation \
+software-properties-common \
+python-software-properties \
+vim nano \
+net-tools netcat rsync \
+git subversion mercurial \
+libgl1-mesa-glx graphviz && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*
 
-    # libmagic-dev libghc-cairo-prof libcairo2-dev glib-2.0-dev libtinfo-dev \
-    # libunwind-dev libicu-dev libzmq5-dev libpango1.0-dev libblas-dev \
-    # liblapack-dev texlive texlive-latex-base texlive-latex-extra texlive-fonts-extra \
-    # texlive-fonts-recommended texlive-generic-recommended pandoc libghc-pandoc-dev \
-    # libboost-all-dev \
-    # fcitx-frontend-qt5 fcitx-modules fcitx-module-dbus \
-    # libedit2 libgl1-mesa-dri libgl1-mesa-glx \
-    # libgstreamer0.10-0 libgstreamer-plugins-base0.10-0 \
-    # libjpeg-dev libjpeg-turbo8-dev libpresage-dev libpresage-data \
-    # libqt5core5a libqt5dbus5 libqt5gui5 libqt5network5 libqt5printsupport5 \
-    # libqt5webkit5 libqt5widgets5 libtiff5 libxcomposite1 libxslt1.1 \
-    # libxcomposite-dev littler && \
-    # Install Java
-    # echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    # apt-get update && \
-    # add-apt-repository --yes ppa:webupd8team/java && \
-    # apt-get update && \
-    # apt-get install --yes  oracle-java8-installer && \
-    # apt-get install --yes oracle-java8-set-default && \
-    # rm -rf /var/lib/apt/lists/* && \
-    # rm -rf /var/cache/oracle-jdk8-installer
-    # apt-get update && apt-get --yes build-dep octave && \
-    # apt-get clean && \
-    # rm -rf /var/lib/apt/lists/*
+add-apt-repository ppa:ubuntu-x-swat/updates
+apt-get update && apt-get dist-upgrade --yes && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*
 
-    # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 33D40BC6
-    # add-apt-repository -u "deb http://rodeo-deb.yhat.com/ rodeo main"
+# add-apt-repository ppa:ubuntu-toolchain-r/test
+apt-get update && apt-get install --yes gcc gfortran libx11-dev libboost-all-dev libboost-dev \
+libgeos++-dev libv8-dev libgdal-dev && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*
+# gcc-7 g++-7 libgcc-7-dev libstdc++-7-dev gfortran-7 \
 
-    # Rodeo GUI Requirements
-    # apt-get update && apt-get --yes install  libxss1 libgconf-2-4 libnss3 libasound2
-    # add-apt-repository ppa:wireshark-dev/stable
+apt-get update && apt-get install --yes --no-install-recommends dbus hicolor-icon-theme libappindicator1 libatk1.0-0 libatk1.0-data \
+libavahi-client3 libavahi-common-data libavahi-common3 libcap-ng0 libcups2 \
+libdbusmenu-glib4 libdbusmenu-gtk4 libgdk-pixbuf2.0-0 \
+libgdk-pixbuf2.0-common libgtk2.0-0 libgtk2.0-bin libgtk2.0-common \
+libindicator7 libnotify-bin libnotify4 libpam-systemd libxcomposite1 \
+libxcursor1 libxi6 libxinerama1 libxrandr2 shared-mime-info indicator-application notification-daemon \
+dbus-user-session dbus-x11 cups-common librsvg2-common gvfs && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*
 
-    # apt-get update && apt-get --yes install rodeo
-    # apt-get update && apt-get --yes install rodeo vim gedit nano net-tools netcat wireshark rsync
-
-
-elif [ "${os_environment}" == "Centos" ]; then
-
-    yum -y update && yum install -y \
-    wget \
-    bzip2 \
-    unzip \
-    ca-certificates \
-    fonts-liberation \
-    file-devel ghc-cairo-devel cairo-devel glib2-devel \
-    libicu-devel zeromq-devel pango-devel blas-devel blosc-devel\
-    lapack-devel texlive ttexlive-latex texlive-xetex texlive-collection-latex \
-    texlive-collection-latexrecommended texlive-xetex-def texlive-collection-xetex pandoc ghc-pandoc-devel \
-    boost-devel \
-    git subversion mercurial \
-    libXScrnSaver && \
-    yum clean all && \
-    rm -rf /var/lib/apt/lists/*
-
-    # Install Java
-    cd /tmp/ && wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/$JDK_VERSION-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-$JDK_VERSION-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm; yum -y install /tmp/jdk-8-linux-x64.rpm
-
-    alternatives --install /usr/bin/java java /usr/java/latest/bin/java 1
-    alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 1
-
-    dnf -y update && dnf copr enable nalimilan/julia -y
-
-    yum -y update && yum-builddep -y octave && \
-    yum clean all && \
-    rm -rf /var/lib/apt/lists/*
-
-    wget http://rodeo-rpm.yhat.com/rodeo-rpm.repo -P /etc/yum.repos.d/
-
-    yum -y update && yum -y install rodeo vim gedit nano net-tools netcat wireshark rsync
-
-else
-    echo "Unknown"
-fi
-
-# ln -s /opt/Rodeo/rodeo /usr/bin/
-# chown -R $DATASCI_USER:$DATASCI_USER /opt/Rodeo
 
 mkdir -p $TINI_DIR
 cd $TINI_DIR

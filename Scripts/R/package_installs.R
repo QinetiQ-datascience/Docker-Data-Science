@@ -1,7 +1,8 @@
 library(devtools)
+devtools::install_github("hadley/devtools",  branch = "dev")
+devtools::install_github("igraph/igraph")
 install.packages("stringi", ,type="linux.binary")
 install.packages("concaveman");
-devtools::install_github("hadley/devtools",  branch = "dev")
 devtools::install_github("r-spatial/sf")
 devtools::install_github("gaborcsardi/pkgconfig")
 devtools::install_github("igraph/rigraph")
@@ -45,5 +46,3 @@ devtools::install_github('apache/spark@v1.4.0', subdir='R/pkg')
 
 install.packages("h2o", type="source", repos=(c("http://h2o-release.s3.amazonaws.com/h2o/latest_stable_R"))) # install the latest stable version of h2o
 install.packages("rmarkdown")
-      
-

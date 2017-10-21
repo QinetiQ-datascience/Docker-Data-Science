@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
-
-cd /tmp && wget --quiet https://repo.continuum.io/archive/$ANACONDA_VERSION.sh -O /tmp/anaconda.sh
-bash /tmp/anaconda.sh -f -b -p $CONDA_DIR && rm /tmp/anaconda.sh
-
 conda config --system --add channels conda-forge && \
 conda config --system --set auto_update_conda true
 conda update --quiet --yes anaconda conda setuptools pip
 
+pip install --upgrade pip
+
 conda install --yes -c conda-forge \
+jupyterlab \
+jupyterhub \
 ipyleaflet \
 bqplot \
 pythreejs \
@@ -21,4 +21,9 @@ rtree \
 pyproj \
 pyshp \
 accelerate \
-gdal
+cmake autoconf automake pkg-config texlive-core \
+zeromq  icu libtool ncurses boost boost-cpp xgboost
+
+conda clean -tipsy
+
+pip install bash_kernel && python -m bash_kernel.install --sys-prefix
